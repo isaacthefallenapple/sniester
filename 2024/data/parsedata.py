@@ -23,7 +23,6 @@ def parse_venue(s: str) -> str:
 
 
 def parse_event(s: str, venue: str, day: int) -> Event:
-    print("event:", s)
     band, timeslot = s.split(" @ ")
     start, end = timeslot.split("-")
     return Event(
@@ -61,8 +60,8 @@ class EventEncoder(json.JSONEncoder):
     def default(self, o: Any) -> Any:
         if isinstance(o, Event):
             return {
+                "name": o.band,
                 "venue": o.venue,
-                "band": o.band,
                 "starttime": o.starttime.isoformat(),
                 "endtime": o.endtime.isoformat(),
             }
@@ -71,9 +70,9 @@ class EventEncoder(json.JSONEncoder):
 
 
 if __name__ == "__main__":
-    infile, outfile = sys.argv[1:]
-    print("Parsing", infile)
-    events = parse_file(infile)
-    print(events)
-    with open(outfile, "w+") as f:
-        print(json.dump(events, fp=f, cls=EventEncoder))
+    for infile in sys.argv[1:]:
+        outfile = f"{infile[:-4]}.json"
+        print("Parsing", infile, "to", outfile)
+        events = parse_file(infile)
+        with open(outfile, "w+") as f:
+            print(json.dump(events, fp=f, cls=EventEncoder))
