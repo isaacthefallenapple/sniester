@@ -5332,10 +5332,6 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$application = _Browser_application;
-var $author$project$Clock$Clock = F2(
-	function (zone, time) {
-		return {time: time, zone: zone};
-	});
 var $author$project$Context$Context = F5(
 	function (key, url, clock, events, schedule) {
 		return {clock: clock, events: events, key: key, schedule: schedule, url: url};
@@ -6363,17 +6359,23 @@ var $author$project$Main$flagsDecoder = A3(
 				'time',
 				$elm$json$Json$Decode$int,
 				$elm$json$Json$Decode$succeed($author$project$Main$Flags)))));
+var $author$project$Clock$Clock = F2(
+	function (zone, time) {
+		return {time: time, zone: zone};
+	});
+var $elm$time$Time$Zone = F2(
+	function (a, b) {
+		return {$: 'Zone', a: a, b: b};
+	});
+var $elm$time$Time$customZone = $elm$time$Time$Zone;
+var $author$project$Clock$inNL = $author$project$Clock$Clock(
+	A2($elm$time$Time$customZone, 2 * 60, _List_Nil));
 var $author$project$Lineup$new = function (ctx) {
 	return {ctx: ctx, selected: $elm$core$Maybe$Nothing};
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $elm$core$Debug$toString = _Debug_toString;
-var $elm$time$Time$Zone = F2(
-	function (a, b) {
-		return {$: 'Zone', a: a, b: b};
-	});
-var $elm$time$Time$utc = A2($elm$time$Time$Zone, 0, _List_Nil);
 var $author$project$Main$init = F3(
 	function (flagsJson, url, key) {
 		var flags = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$flagsDecoder, flagsJson);
@@ -6392,9 +6394,7 @@ var $author$project$Main$init = F3(
 				$author$project$Context$Context,
 				key,
 				url,
-				A2(
-					$author$project$Clock$Clock,
-					$elm$time$Time$utc,
+				$author$project$Clock$inNL(
 					$elm$time$Time$millisToPosix(time)),
 				A3($author$project$Context$Events, friday, saturday, popup),
 				$author$project$Context$Friday);
@@ -6564,7 +6564,7 @@ var $author$project$Lineup$update = F2(
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		var _v0 = _Utils_Tuple2(msg, model);
-		_v0$5:
+		_v0$4:
 		while (true) {
 			switch (_v0.a.$) {
 				case 'ClickedLink':
@@ -6618,38 +6618,17 @@ var $author$project$Main$update = F2(
 								$author$project$Lineup$new(newCtx)),
 							$elm$core$Platform$Cmd$none);
 					} else {
-						break _v0$5;
+						break _v0$4;
 					}
 				case 'GotData':
-					if (_v0.a.a.$ === 'Ok') {
-						if (_v0.b.$ === 'Initial') {
-							var events = _v0.a.a.a;
-							var _v3 = _v0.b;
-							var url = _v3.a;
-							var key = _v3.b;
-							var ctx = A5(
-								$author$project$Context$Context,
-								key,
-								url,
-								A2(
-									$author$project$Clock$Clock,
-									$elm$time$Time$utc,
-									$elm$time$Time$millisToPosix(0)),
-								A3($author$project$Context$Events, events, events, events),
-								$author$project$Context$Friday);
-							return _Utils_Tuple2(
-								$author$project$Main$Lineup(
-									$author$project$Lineup$new(ctx)),
-								$elm$core$Platform$Cmd$none);
-						} else {
-							break _v0$5;
-						}
-					} else {
+					if (_v0.a.a.$ === 'Err') {
 						var err = _v0.a.a.a;
 						return _Utils_Tuple2(
 							$author$project$Main$Error(
 								$elm$core$Debug$toString(err)),
 							$elm$core$Platform$Cmd$none);
+					} else {
+						break _v0$4;
 					}
 				case 'LineupMsg':
 					if (_v0.b.$ === 'Lineup') {
@@ -6660,10 +6639,10 @@ var $author$project$Main$update = F2(
 								A2($author$project$Lineup$update, m, mdl)),
 							$elm$core$Platform$Cmd$none);
 					} else {
-						break _v0$5;
+						break _v0$4;
 					}
 				default:
-					break _v0$5;
+					break _v0$4;
 			}
 		}
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);

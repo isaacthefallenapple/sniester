@@ -159,13 +159,13 @@ update msg model =
             in
             ( Lineup <| Lineup.new newCtx, Cmd.none )
 
-        ( GotData (Ok events), Initial url key ) ->
-            let
-                ctx =
-                    Context key url (Clock Time.utc (Time.millisToPosix 0)) (Events events events events) Context.Friday
-            in
-            ( Lineup <| Lineup.new ctx, Cmd.none )
-
+        -- ( GotData (Ok events), Initial url key ) ->
+        --     let
+        --         ctx =
+        --             Context key url (Clock Time.utc (Time.millisToPosix 0)) (Events events events events) Context.Friday
+        --     in
+        --     ( Lineup <| Lineup.new ctx, Cmd.none )
+        --
         ( GotData (Err err), _ ) ->
             ( Error <| Debug.toString err, Cmd.none )
 
@@ -217,7 +217,7 @@ init flagsJson url key =
         Ok { time, friday, saturday, popup } ->
             let
                 ctx =
-                    Context key url (Clock Time.utc <| Time.millisToPosix time) (Events friday saturday popup) Friday
+                    Context key url (Clock.inNL <| Time.millisToPosix time) (Events friday saturday popup) Friday
             in
             ( Lineup <| Lineup.new ctx, Cmd.none )
 
