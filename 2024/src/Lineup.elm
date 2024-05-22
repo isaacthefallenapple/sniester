@@ -3,8 +3,7 @@ module Lineup exposing (..)
 import Clock exposing (Clock)
 import Event exposing (Event)
 import Html exposing (Attribute, Html)
-import Html.Attributes exposing (alt, attribute, class, property)
-import Json.Encode as Encode
+import Html.Attributes exposing (attribute, class, title)
 import List
 import Time
 
@@ -59,7 +58,7 @@ viewEvent _ startTime row event =
             , ( "grid-column-start", String.fromInt (quarterHours + 1) )
             , ( "grid-column-end", String.fromInt (quarterHours + 1 + length) )
             ]
-        , alt event.name
+        , title event.name
         ]
         [ Html.h3
             []
