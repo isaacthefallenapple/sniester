@@ -16,29 +16,36 @@
   padding: 0;
 }
 
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
 body {
   font-family: "Passion One", sans-serif;
   font-weight: 400;
   font-style: normal;
+  font-size: 2rem;
+  line-height: 1;
   background-color: var(--clr-black);
   scrollbar-color: var(--clr-black) var(--clr-yellow);
-}
-
-h3 {
-  font-size: 2rem;
+  text-size-adjust: none;
 }
 
 .lineup {
   text-transform: uppercase;
+  font-size: clamp(2.5rem, 1rem + 2vw, 3rem);
 
   --row-size: 5.5rem;
   --column-size: 3rem;
-  --first-row-size: 5.5rem;
-  --gutter: 1em;
+  --first-row-size: clamp(5.5rem, 2rem + 4vw, 7.5rem);
+  --gutter: 0.25em;
 
   display: grid;
   grid-template-columns: fit-content(8ch) fit-content(100vw);
-  grid-template-rows: var(--first-row-size) 1fr;
+  grid-template-rows: var(--first-row-size) 1fr var(--first-row-size);
   gap: var(--gutter) 0;
 
   overflow: scroll;
