@@ -61,6 +61,10 @@ body {
   > .events {
     grid-area: 2 / 2;
   }
+
+  > .status-updater {
+    grid-area: 3 / 2;
+  }
 }
 
 .timestamps {
@@ -128,6 +132,14 @@ body {
   justify-content: center;
   text-align: center;
   margin: 0.1rem;
+}
+
+.status-updater {
+  font-size: 4rem;
+
+  > .current-status {
+    background-color: var(--clr-yellow);
+  }
 }
 
 .blackout-box {

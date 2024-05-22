@@ -1,22 +1,55 @@
 module Lineup exposing (..)
 
 import Clock exposing (Clock)
+import Context exposing (Context, getScheduled)
 import Event exposing (Event)
 import Html exposing (Attribute, Html)
-import Html.Attributes exposing (attribute, class, title)
+import Html.Attributes exposing (attribute, checked, class, classList, name, title, type_)
+import Html.Events exposing (onClick)
 import List
 import Time
+
+
+type Msg
+    = ClickedEvent Event.Id
+    | UpdateEvent Event.Id Event.Status
+
+
+type alias Model =
+    { ctx : Context
+    , selected : Maybe Event.Id
+    }
+
+
+new : Context -> Model
+new ctx =
+    { ctx = ctx
+    , selected = Nothing
+    }
 
 
 type alias ToMsg msg =
     Event.Id -> Event.Status -> msg
 
 
-view : ToMsg msg -> List Event -> Clock -> Html msg
-view toMsg events ({} as clock) =
+update : Msg -> Model -> Model
+update msg ({ ctx } as model) =
+    case msg of
+        ClickedEvent event ->
+            { model | selected = Just event }
+
+        UpdateEvent id status ->
+            { model | ctx = Context.setStatus ctx id status }
+
+
+view : Model -> Html Msg
+view { ctx, selected } =
     let
+        events =
+            getScheduled ctx
+
         withTime =
-            Clock.withTime clock
+            Clock.withTime ctx.clock
 
         ( startTime, endTime ) =
             Tuple.mapBoth withTime withTime <| findStartAndEnd events
@@ -30,15 +63,17 @@ view toMsg events ({} as clock) =
     Html.div
         [ class "lineup"
         ]
+    <|
         [ Html.div [ class "blackout-box" ] []
         , viewTimeline startTime quarterHours
         , viewVenues <| List.map .venue byVenue
-        , viewEvents toMsg byVenue startTime (List.length byVenue) (quarterHours + 1)
+        , viewEvents byVenue startTime (List.length byVenue) (quarterHours + 1)
         ]
+            ++ Maybe.withDefault [] (Maybe.map (viewUpdater >> List.singleton) (Maybe.andThen (Context.getEvent ctx) selected))
 
 
-viewEvent : ToMsg msg -> Clock -> Int -> Event -> Html msg
-viewEvent _ startTime row event =
+viewEvent : Clock -> Int -> Event -> Html Msg
+viewEvent startTime row event =
     let
         eventStart =
             Clock.withTime startTime event.starttime
@@ -59,8 +94,9 @@ viewEvent _ startTime row event =
             , ( "grid-column-end", String.fromInt (quarterHours + 1 + length) )
             ]
         , title event.name
+        , onClick <| ClickedEvent event.id
         ]
-        [ Html.h3
+        [ Html.span
             []
             [ Html.text event.name ]
         ]
@@ -120,8 +156,8 @@ viewVenues venues =
         List.map (\s -> Html.div [] [ Html.text s ]) venues
 
 
-viewEvents : ToMsg msg -> List { venue : String, events : List Event } -> Clock -> Int -> Int -> Html msg
-viewEvents toMsg events startTime rows columns =
+viewEvents : List { venue : String, events : List Event } -> Clock -> Int -> Int -> Html Msg
+viewEvents events startTime rows columns =
     Html.div
         [ class "events"
         , style
@@ -132,7 +168,7 @@ viewEvents toMsg events startTime rows columns =
     <|
         (events
             |> List.map .events
-            |> List.indexedMap (\i -> List.map (viewEvent toMsg startTime i))
+            |> List.indexedMap (\i -> List.map (viewEvent startTime i))
             |> List.concat
         )
 
@@ -155,6 +191,30 @@ findStartAndEnd events =
     ( Time.millisToPosix << panic <| List.minimum (List.map (.starttime >> Time.posixToMillis) events)
     , Time.millisToPosix << panic <| List.maximum (List.map (.endtime >> Time.posixToMillis) events)
     )
+
+
+viewUpdater : Event -> Html Msg
+viewUpdater ev =
+    let
+        data =
+            [ Event.Going
+            , Event.Interested
+            , Event.Undecided
+            , Event.Skip
+            ]
+    in
+    Html.div
+        [ class "status-updater" ]
+    <|
+        List.map
+            (\s ->
+                Html.button
+                    [ classList [ ( "current-status", s == ev.status ) ]
+                    , onClick <| UpdateEvent ev.id s
+                    ]
+                    [ Html.text <| Event.statusToEmoji s ]
+            )
+            data
 
 
 totalQuarterHours : Clock -> Clock -> Int

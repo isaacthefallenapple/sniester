@@ -7310,25 +7310,127 @@ var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $author$project$Main$subscriptions = function (_v0) {
 	return $elm$core$Platform$Sub$none;
 };
-var $author$project$Main$Context = F4(
-	function (key, url, timezone, time) {
-		return {key: key, time: time, timezone: timezone, url: url};
+var $author$project$Clock$Clock = F2(
+	function (zone, time) {
+		return {time: time, zone: zone};
+	});
+var $author$project$Context$Context = F5(
+	function (key, url, clock, events, schedule) {
+		return {clock: clock, events: events, key: key, schedule: schedule, url: url};
 	});
 var $author$project$Main$Error = function (a) {
 	return {$: 'Error', a: a};
 };
-var $author$project$Main$Events = F3(
+var $author$project$Context$Events = F3(
 	function (friday, saturday, popup) {
 		return {friday: friday, popup: popup, saturday: saturday};
 	});
-var $author$project$Main$LineUp = {$: 'LineUp'};
-var $author$project$Main$Model = function (a) {
-	return {$: 'Model', a: a};
+var $author$project$Context$Friday = {$: 'Friday'};
+var $author$project$Main$Lineup = function (a) {
+	return {$: 'Lineup', a: a};
 };
-var $elm$core$Debug$log = _Debug_log;
+var $author$project$Lineup$new = function (ctx) {
+	return {ctx: ctx, selected: $elm$core$Maybe$Nothing};
+};
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $elm$core$Debug$toString = _Debug_toString;
+var $author$project$Context$getScheduled = function (_v0) {
+	var events = _v0.events;
+	var schedule = _v0.schedule;
+	return function () {
+		switch (schedule.$) {
+			case 'Friday':
+				return function ($) {
+					return $.friday;
+				};
+			case 'Saturday':
+				return function ($) {
+					return $.saturday;
+				};
+			default:
+				return function ($) {
+					return $.popup;
+				};
+		}
+	}()(events);
+};
+var $author$project$Context$setScheduled = F2(
+	function (ctx, newEvents) {
+		var schedule = ctx.schedule;
+		var events = ctx.events;
+		switch (schedule.$) {
+			case 'Friday':
+				return _Utils_update(
+					ctx,
+					{
+						events: _Utils_update(
+							events,
+							{friday: newEvents})
+					});
+			case 'Saturday':
+				return _Utils_update(
+					ctx,
+					{
+						events: _Utils_update(
+							events,
+							{saturday: newEvents})
+					});
+			default:
+				return _Utils_update(
+					ctx,
+					{
+						events: _Utils_update(
+							events,
+							{popup: newEvents})
+					});
+		}
+	});
+var $author$project$Context$updateScheduled = F3(
+	function (ctx, id, f) {
+		var schedule = $author$project$Context$getScheduled(ctx);
+		return A2(
+			$author$project$Context$setScheduled,
+			ctx,
+			A2(
+				$elm$core$List$map,
+				function (e) {
+					return _Utils_eq(e.id, id) ? f(e) : e;
+				},
+				schedule));
+	});
+var $author$project$Context$setStatus = F3(
+	function (ctx, id, status) {
+		return A3(
+			$author$project$Context$updateScheduled,
+			ctx,
+			id,
+			function (e) {
+				return _Utils_update(
+					e,
+					{status: status});
+			});
+	});
+var $author$project$Lineup$update = F2(
+	function (msg, model) {
+		var ctx = model.ctx;
+		if (msg.$ === 'ClickedEvent') {
+			var event = msg.a;
+			return _Utils_update(
+				model,
+				{
+					selected: $elm$core$Maybe$Just(event)
+				});
+		} else {
+			var id = msg.a;
+			var status = msg.b;
+			return _Utils_update(
+				model,
+				{
+					ctx: A3($author$project$Context$setStatus, ctx, id, status)
+				});
+		}
+	});
 var $elm$time$Time$Zone = F2(
 	function (a, b) {
 		return {$: 'Zone', a: a, b: b};
@@ -7337,7 +7439,7 @@ var $elm$time$Time$utc = A2($elm$time$Time$Zone, 0, _List_Nil);
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		var _v0 = _Utils_Tuple2(msg, model);
-		_v0$3:
+		_v0$4:
 		while (true) {
 			switch (_v0.a.$) {
 				case 'ChangedUrl':
@@ -7349,7 +7451,7 @@ var $author$project$Main$update = F2(
 							A2($author$project$Main$Initial, url, key),
 							$elm$core$Platform$Cmd$none);
 					} else {
-						break _v0$3;
+						break _v0$4;
 					}
 				case 'GotData':
 					if (_v0.a.a.$ === 'Ok') {
@@ -7358,25 +7460,22 @@ var $author$project$Main$update = F2(
 							var _v2 = _v0.b;
 							var url = _v2.a;
 							var key = _v2.b;
+							var ctx = A5(
+								$author$project$Context$Context,
+								key,
+								url,
+								A2(
+									$author$project$Clock$Clock,
+									$elm$time$Time$utc,
+									$elm$time$Time$millisToPosix(0)),
+								A3($author$project$Context$Events, events, events, events),
+								$author$project$Context$Friday);
 							return _Utils_Tuple2(
-								$author$project$Main$Model(
-									{
-										ctx: A4(
-											$author$project$Main$Context,
-											key,
-											url,
-											$elm$time$Time$utc,
-											$elm$time$Time$millisToPosix(0)),
-										events: A3(
-											$author$project$Main$Events,
-											A2($elm$core$Debug$log, 'events', events),
-											events,
-											events),
-										view: $author$project$Main$LineUp
-									}),
+								$author$project$Main$Lineup(
+									$author$project$Lineup$new(ctx)),
 								$elm$core$Platform$Cmd$none);
 						} else {
-							break _v0$3;
+							break _v0$4;
 						}
 					} else {
 						var err = _v0.a.a.a;
@@ -7385,20 +7484,28 @@ var $author$project$Main$update = F2(
 								$elm$core$Debug$toString(err)),
 							$elm$core$Platform$Cmd$none);
 					}
+				case 'LineupMsg':
+					if (_v0.b.$ === 'Lineup') {
+						var m = _v0.a.a;
+						var mdl = _v0.b.a;
+						return _Utils_Tuple2(
+							$author$project$Main$Lineup(
+								A2($author$project$Lineup$update, m, mdl)),
+							$elm$core$Platform$Cmd$none);
+					} else {
+						break _v0$4;
+					}
 				default:
-					break _v0$3;
+					break _v0$4;
 			}
 		}
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 	});
-var $author$project$Clock$Clock = F2(
-	function (zone, time) {
-		return {time: time, zone: zone};
-	});
-var $author$project$Main$UpdateEvent = F2(
-	function (a, b) {
-		return {$: 'UpdateEvent', a: a, b: b};
-	});
+var $author$project$Main$LineupMsg = function (a) {
+	return {$: 'LineupMsg', a: a};
+};
+var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
+var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
 var $elm$html$Html$p = _VirtualDom_node('p');
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
@@ -7446,6 +7553,15 @@ var $elm$url$Url$toString = function (url) {
 					_Utils_ap(http, url.host)),
 				url.path)));
 };
+var $elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (maybeValue.$ === 'Just') {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -7577,8 +7693,8 @@ var $author$project$Lineup$findStartAndEnd = function (events) {
 			return _Debug_todo(
 				'Lineup',
 				{
-					start: {line: 154, column: 29},
-					end: {line: 154, column: 39}
+					start: {line: 189, column: 29},
+					end: {line: 189, column: 39}
 				})('Maybe was Nothing');
 		});
 	return _Utils_Tuple2(
@@ -7611,6 +7727,49 @@ var $author$project$Lineup$findStartAndEnd = function (events) {
 						$elm$time$Time$posixToMillis),
 					events))));
 };
+var $author$project$Context$find = F2(
+	function (f, list) {
+		find:
+		while (true) {
+			if (!list.b) {
+				return $elm$core$Maybe$Nothing;
+			} else {
+				var x = list.a;
+				var rest = list.b;
+				if (f(x)) {
+					return $elm$core$Maybe$Just(x);
+				} else {
+					var $temp$f = f,
+						$temp$list = rest;
+					f = $temp$f;
+					list = $temp$list;
+					continue find;
+				}
+			}
+		}
+	});
+var $author$project$Context$getEvent = F2(
+	function (ctx, id) {
+		return A2(
+			$author$project$Context$find,
+			A2(
+				$elm$core$Basics$composeR,
+				function ($) {
+					return $.id;
+				},
+				$elm$core$Basics$eq(id)),
+			$author$project$Context$getScheduled(ctx));
+	});
+var $elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return $elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
 var $elm$core$Tuple$mapBoth = F3(
 	function (funcA, funcB, _v0) {
 		var x = _v0.a;
@@ -7619,6 +7778,10 @@ var $elm$core$Tuple$mapBoth = F3(
 			funcA(x),
 			funcB(y));
 	});
+var $elm$core$List$singleton = function (value) {
+	return _List_fromArray(
+		[value]);
+};
 var $author$project$Clock$toPosixMillis = function (_v0) {
 	var time = _v0.time;
 	return $elm$time$Time$posixToMillis(time);
@@ -7661,17 +7824,37 @@ var $author$project$Lineup$style = function (styles) {
 		styles);
 	return A2($elm$html$Html$Attributes$attribute, 'style', css);
 };
-var $elm$html$Html$Attributes$alt = $elm$html$Html$Attributes$stringProperty('alt');
+var $author$project$Lineup$ClickedEvent = function (a) {
+	return {$: 'ClickedEvent', a: a};
+};
 var $elm$html$Html$article = _VirtualDom_node('article');
-var $elm$html$Html$h3 = _VirtualDom_node('h3');
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
+var $elm$html$Html$span = _VirtualDom_node('span');
+var $elm$html$Html$Attributes$title = $elm$html$Html$Attributes$stringProperty('title');
 var $author$project$Clock$withTime = F2(
 	function (clock, time) {
 		return _Utils_update(
 			clock,
 			{time: time});
 	});
-var $author$project$Lineup$viewEvent = F4(
-	function (_v0, startTime, row, event) {
+var $author$project$Lineup$viewEvent = F3(
+	function (startTime, row, event) {
 		var eventStart = A2($author$project$Clock$withTime, startTime, event.starttime);
 		var quarterHours = A2($author$project$Lineup$totalQuarterHours, startTime, eventStart);
 		var eventEnd = A2($author$project$Clock$withTime, startTime, event.endtime);
@@ -7693,12 +7876,14 @@ var $author$project$Lineup$viewEvent = F4(
 							'grid-column-end',
 							$elm$core$String$fromInt((quarterHours + 1) + length))
 						])),
-					$elm$html$Html$Attributes$alt(event.name)
+					$elm$html$Html$Attributes$title(event.name),
+					$elm$html$Html$Events$onClick(
+					$author$project$Lineup$ClickedEvent(event.id))
 				]),
 			_List_fromArray(
 				[
 					A2(
-					$elm$html$Html$h3,
+					$elm$html$Html$span,
 					_List_Nil,
 					_List_fromArray(
 						[
@@ -7706,8 +7891,8 @@ var $author$project$Lineup$viewEvent = F4(
 						]))
 				]));
 	});
-var $author$project$Lineup$viewEvents = F5(
-	function (toMsg, events, startTime, rows, columns) {
+var $author$project$Lineup$viewEvents = F4(
+	function (events, startTime, rows, columns) {
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -7729,7 +7914,7 @@ var $author$project$Lineup$viewEvents = F5(
 					$elm$core$List$indexedMap,
 					function (i) {
 						return $elm$core$List$map(
-							A3($author$project$Lineup$viewEvent, toMsg, startTime, i));
+							A2($author$project$Lineup$viewEvent, startTime, i));
 					},
 					A2(
 						$elm$core$List$map,
@@ -7897,6 +8082,71 @@ var $author$project$Lineup$viewTimeline = F2(
 				},
 				A2($elm$core$List$map, $author$project$Clock$toString, timestamps)));
 	});
+var $author$project$Lineup$UpdateEvent = F2(
+	function (a, b) {
+		return {$: 'UpdateEvent', a: a, b: b};
+	});
+var $elm$html$Html$button = _VirtualDom_node('button');
+var $elm$core$Tuple$second = function (_v0) {
+	var y = _v0.b;
+	return y;
+};
+var $elm$html$Html$Attributes$classList = function (classes) {
+	return $elm$html$Html$Attributes$class(
+		A2(
+			$elm$core$String$join,
+			' ',
+			A2(
+				$elm$core$List$map,
+				$elm$core$Tuple$first,
+				A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
+};
+var $author$project$Event$statusToEmoji = function (status) {
+	switch (status.$) {
+		case 'Going':
+			return '✅';
+		case 'Interested':
+			return '👀';
+		case 'Skip':
+			return '❌';
+		default:
+			return '🤷';
+	}
+};
+var $author$project$Lineup$viewUpdater = function (ev) {
+	var data = _List_fromArray(
+		[$author$project$Event$Going, $author$project$Event$Interested, $author$project$Event$Undecided, $author$project$Event$Skip]);
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('status-updater')
+			]),
+		A2(
+			$elm$core$List$map,
+			function (s) {
+				return A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$classList(
+							_List_fromArray(
+								[
+									_Utils_Tuple2(
+									'current-status',
+									_Utils_eq(s, ev.status))
+								])),
+							$elm$html$Html$Events$onClick(
+							A2($author$project$Lineup$UpdateEvent, ev.id, s))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							$author$project$Event$statusToEmoji(s))
+						]));
+			},
+			data));
+};
 var $author$project$Lineup$viewVenues = function (venues) {
 	return A2(
 		$elm$html$Html$header,
@@ -7925,24 +8175,36 @@ var $author$project$Lineup$viewVenues = function (venues) {
 			},
 			venues));
 };
-var $author$project$Lineup$view = F3(
-	function (toMsg, events, clock) {
-		var withTime = $author$project$Clock$withTime(clock);
-		var byVenue = $author$project$Lineup$eventsByVenue(events);
-		var _v0 = A3(
-			$elm$core$Tuple$mapBoth,
-			withTime,
-			withTime,
-			$author$project$Lineup$findStartAndEnd(events));
-		var startTime = _v0.a;
-		var endTime = _v0.b;
-		var quarterHours = A2($author$project$Lineup$totalQuarterHours, startTime, endTime);
-		return A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('lineup')
-				]),
+var $elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
+var $author$project$Lineup$view = function (_v0) {
+	var ctx = _v0.ctx;
+	var selected = _v0.selected;
+	var withTime = $author$project$Clock$withTime(ctx.clock);
+	var events = $author$project$Context$getScheduled(ctx);
+	var byVenue = $author$project$Lineup$eventsByVenue(events);
+	var _v1 = A3(
+		$elm$core$Tuple$mapBoth,
+		withTime,
+		withTime,
+		$author$project$Lineup$findStartAndEnd(events));
+	var startTime = _v1.a;
+	var endTime = _v1.b;
+	var quarterHours = A2($author$project$Lineup$totalQuarterHours, startTime, endTime);
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('lineup')
+			]),
+		_Utils_ap(
 			_List_fromArray(
 				[
 					A2(
@@ -7960,15 +8222,24 @@ var $author$project$Lineup$view = F3(
 							return $.venue;
 						},
 						byVenue)),
-					A5(
+					A4(
 					$author$project$Lineup$viewEvents,
-					toMsg,
 					byVenue,
 					startTime,
 					$elm$core$List$length(byVenue),
 					quarterHours + 1)
-				]));
-	});
+				]),
+			A2(
+				$elm$core$Maybe$withDefault,
+				_List_Nil,
+				A2(
+					$elm$core$Maybe$map,
+					A2($elm$core$Basics$composeR, $author$project$Lineup$viewUpdater, $elm$core$List$singleton),
+					A2(
+						$elm$core$Maybe$andThen,
+						$author$project$Context$getEvent(ctx),
+						selected)))));
+};
 var $author$project$Main$view = function (model) {
 	switch (model.$) {
 		case 'Initial':
@@ -7987,18 +8258,16 @@ var $author$project$Main$view = function (model) {
 					]),
 				title: 'Sniester 2024'
 			};
-		case 'Model':
-			var events = model.a.events;
-			var ctx = model.a.ctx;
+		case 'Lineup':
+			var m = model.a;
 			return {
 				body: _List_fromArray(
 					[
 						$elm$html$Html$text('Lineup:'),
-						A3(
-						$author$project$Lineup$view,
-						$author$project$Main$UpdateEvent,
-						A2($elm$core$Debug$log, 'friday', events.friday),
-						A2($author$project$Clock$Clock, ctx.timezone, ctx.time))
+						A2(
+						$elm$html$Html$map,
+						$author$project$Main$LineupMsg,
+						$author$project$Lineup$view(m))
 					]),
 				title: 'Sniester 2024'
 			};

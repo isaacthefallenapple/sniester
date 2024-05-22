@@ -1,4 +1,4 @@
-module Event exposing (Event, Id, Status, decoder, encode)
+module Event exposing (Event, Id, Status(..), decoder, encode, statusToEmoji)
 
 import Iso8601
 import Json.Decode as Dec exposing (Decoder)
@@ -12,6 +12,22 @@ type Status
     | Interested
     | Skip
     | Undecided
+
+
+statusToEmoji : Status -> String
+statusToEmoji status =
+    case status of
+        Going ->
+            "✅"
+
+        Interested ->
+            "👀"
+
+        Skip ->
+            "❌"
+
+        Undecided ->
+            "🤷"
 
 
 encodeStatus : Status -> Value

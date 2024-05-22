@@ -3,9 +3,10 @@ module Main exposing (..)
 import Browser exposing (Document)
 import Browser.Navigation as Nav
 import Clock exposing (Clock)
-import Debug
+import Context exposing (Context, Events)
+import Debug exposing (todo)
 import Event exposing (Event)
-import Html
+import Html exposing (Html)
 import Http
 import Json.Decode
 import Lineup
@@ -19,34 +20,9 @@ import Url exposing (Url)
 -- MODEL
 
 
-type alias Context =
-    { key : Nav.Key
-    , url : Url
-    , timezone : Time.Zone
-    , time : Time.Posix
-    }
-
-
-type alias Events =
-    { friday : List Event
-    , saturday : List Event
-    , popup : List Event
-    }
-
-
-type EventView
-    = LineUp
-    | Schedule
-    | Venue
-
-
 type Model
     = Initial Url Nav.Key
-    | Model
-        { ctx : Context
-        , events : Events
-        , view : EventView
-        }
+    | Lineup Lineup.Model
     | Error String
 
 
@@ -61,6 +37,7 @@ type Msg
     | GotInitialTime Time.Zone Time.Posix
     | GotData (Result Http.Error (List Event))
     | UpdateEvent Event.Id Event.Status
+    | LineupMsg Lineup.Msg
 
 
 
@@ -75,9 +52,9 @@ view model =
             , body = [ Html.p [] [ Html.text <| Url.toString url ] ]
             }
 
-        Model { events, ctx } ->
+        Lineup m ->
             { title = "Sniester 2024"
-            , body = [ Html.text "Lineup:", Lineup.view UpdateEvent (Debug.log "friday" events.friday) <| Clock ctx.timezone ctx.time ]
+            , body = [ Html.text "Lineup:", Html.map LineupMsg <| Lineup.view m ]
             }
 
         Error err ->
@@ -97,10 +74,17 @@ update msg model =
             ( Initial url key, Cmd.none )
 
         ( GotData (Ok events), Initial url key ) ->
-            ( Model { ctx = Context key url Time.utc (Time.millisToPosix 0), events = Events (Debug.log "events" events) events events, view = LineUp }, Cmd.none )
+            let
+                ctx =
+                    Context key url (Clock Time.utc (Time.millisToPosix 0)) (Events events events events) Context.Friday
+            in
+            ( Lineup <| Lineup.new ctx, Cmd.none )
 
         ( GotData (Err err), _ ) ->
             ( Error <| Debug.toString err, Cmd.none )
+
+        ( LineupMsg m, Lineup mdl ) ->
+            ( Lineup <| Lineup.update m mdl, Cmd.none )
 
         -- ( GotInitialTime zone now, Initial url key ) ->
         --     ( Model { ctx = { key = key, url = url, timezone = zone, time = now }, friday = [], saturday = [], popup = [] }, Cmd.none )
