@@ -42,6 +42,7 @@ type Msg
     | GotData (Result Http.Error (List Event))
     | UpdateEvent Event.Id Event.Status
     | LineupMsg Lineup.Msg
+    | DayToggled Context.Schedule
 
 
 
@@ -52,15 +53,7 @@ viewSkeleton : Context.Schedule -> (msg -> Msg) -> Html msg -> Document Msg
 viewSkeleton schedule map html =
     let
         title =
-            case schedule of
-                Friday ->
-                    "Friday"
-
-                Saturday ->
-                    "Saturday"
-
-                Popup ->
-                    "Popup"
+            Context.scheduleToString schedule
     in
     { title = "Sniester 2024" ++ " // " ++ title
     , body =
@@ -72,6 +65,10 @@ viewSkeleton schedule map html =
             , Html.section
                 [ class "select-view" ]
                 []
+            , Html.section
+                [ class "day-toggle-container" ]
+                [ viewSaturdayToggle schedule
+                ]
             , Html.section
                 [ class "view" ]
                 [ Html.map map html
@@ -86,18 +83,42 @@ viewSkeleton schedule map html =
                     ]
                 , Html.a
                     [ href "saturday"
-                    , classList [ ( "you-are-here", schedule == Saturday ) ]
+                    , classList [ ( "you-are-here", schedule /= Friday ) ]
                     ]
                     [ Html.text "Saturday" ]
-                , Html.a
-                    [ href "popup"
-                    , classList [ ( "you-are-here", schedule == Popup ) ]
-                    ]
-                    [ Html.text "Popup" ]
                 ]
             ]
         ]
     }
+
+
+viewSaturdayToggle : Context.Schedule -> Html Msg
+viewSaturdayToggle schedule =
+    if schedule == Friday then
+        Html.div [] []
+
+    else
+        Html.div
+            [ class "day-toggle"
+            , onClick <|
+                DayToggled <|
+                    if schedule == Saturday then
+                        Popup
+
+                    else
+                        Saturday
+            ]
+            [ Html.div [] [ Html.text "Regular" ]
+            , Html.input
+                [ type_ "checkbox"
+                , checked <| schedule == Popup
+                ]
+                []
+            , Html.div [ class "day-toggle-indicator" ]
+                [ Html.div [] []
+                ]
+            , Html.div [] [ Html.text "Popup" ]
+            ]
 
 
 view : Model -> Document Msg
@@ -143,6 +164,9 @@ update msg model =
 
                 Browser.External href ->
                     ( model, Nav.load href )
+
+        ( DayToggled schedule, Lineup { ctx } ) ->
+            ( Lineup <| Lineup.new <| Context.setSchedule ctx schedule, Nav.pushUrl ctx.key <| Context.scheduleToPath schedule )
 
         ( ChangedUrl ({ path, query } as url), Lineup { ctx } ) ->
             let

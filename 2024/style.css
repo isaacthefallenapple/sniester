@@ -246,3 +246,48 @@ a {
   z-index: 999;
   margin-inline-end: 1.5rem;
 }
+
+.day-toggle {
+  --label-width: 8ch;
+  --toggle-width: 1.5em;
+  --gutter: 1em;
+
+  color: var(--clr-white);
+
+  display: grid;
+  grid-template-columns: var(--label-width) var(--toggle-width) var(
+      --label-width
+    );
+  gap: var(--gutter);
+  align-items: center;
+
+  > input {
+    display: none;
+
+    &:checked + .day-toggle-indicator {
+      > div {
+        margin-inline-start: auto;
+      }
+    }
+  }
+
+  .day-toggle-indicator {
+    width: 100%;
+    aspect-ratio: 5 / 2;
+
+    background-color: var(--clr-yellow);
+    border-radius: 100vmax;
+
+    display: flex;
+    align-items: center;
+
+    border: 5px solid var(--clr-yellow);
+
+    > div {
+      height: 100%;
+      border-radius: 100%;
+      aspect-ratio: 1;
+      background-color: var(--clr-purple);
+    }
+  }
+}

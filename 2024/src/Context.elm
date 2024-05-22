@@ -101,3 +101,21 @@ type Schedule
     = Friday
     | Saturday
     | Popup
+
+
+scheduleToString : Schedule -> String
+scheduleToString schedule =
+    case schedule of
+        Friday ->
+            "Friday"
+
+        Saturday ->
+            "Saturday"
+
+        Popup ->
+            "Popup"
+
+
+scheduleToPath : Schedule -> String
+scheduleToPath =
+    scheduleToString >> String.toLower >> (++) "/2024/"
