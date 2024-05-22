@@ -87,6 +87,11 @@ viewSkeleton schedule map html =
                     , classList [ ( "you-are-here", schedule == Saturday ) ]
                     ]
                     [ Html.text "Saturday" ]
+                , Html.a
+                    [ href "popup"
+                    , classList [ ( "you-are-here", schedule == Popup ) ]
+                    ]
+                    [ Html.text "Popup" ]
                 ]
             ]
         ]

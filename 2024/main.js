@@ -6581,8 +6581,8 @@ var $author$project$Main$update = F2(
 								return _Debug_todo(
 									'Main',
 									{
-										start: {line: 131, column: 29},
-										end: {line: 131, column: 39}
+										start: {line: 136, column: 29},
+										end: {line: 136, column: 39}
 									})('panic');
 						}
 					}();
@@ -6818,8 +6818,8 @@ var $author$project$Lineup$findStartAndEnd = function (events) {
 			return _Debug_todo(
 				'Lineup',
 				{
-					start: {line: 193, column: 29},
-					end: {line: 193, column: 39}
+					start: {line: 234, column: 29},
+					end: {line: 234, column: 39}
 				})('Maybe was Nothing');
 		});
 	return _Utils_Tuple2(
@@ -6970,8 +6970,83 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
+var $elm$core$Tuple$second = function (_v0) {
+	var y = _v0.b;
+	return y;
+};
+var $elm$html$Html$Attributes$classList = function (classes) {
+	return $elm$html$Html$Attributes$class(
+		A2(
+			$elm$core$String$join,
+			' ',
+			A2(
+				$elm$core$List$map,
+				$elm$core$Tuple$first,
+				A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
+};
+var $elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
+var $author$project$Lineup$longestWordLength = function (str) {
+	return A2(
+		$elm$core$Maybe$withDefault,
+		0,
+		$elm$core$List$maximum(
+			A2(
+				$elm$core$List$map,
+				$elm$core$String$length,
+				A2($elm$core$String$split, ' ', str))));
+};
 var $elm$html$Html$span = _VirtualDom_node('span');
+var $author$project$Lineup$wordCount = A2(
+	$elm$core$Basics$composeR,
+	$elm$core$String$split(' '),
+	$elm$core$List$length);
+var $author$project$Lineup$renderName = F2(
+	function (name, length) {
+		var rotate = length === 1;
+		var longest = $author$project$Lineup$longestWordLength(name);
+		var canFit = (length > 1) && ((((((longest + length) - 1) / length) | 0) <= 3) && ((_Utils_cmp(
+			(($elm$core$String$length(name) + 0) / 6) | 0,
+			length) < 1) && ((_Utils_cmp(
+			$author$project$Lineup$wordCount(name),
+			length) < 1) && (name !== 'The Northern Boys'))));
+		return A2(
+			$elm$html$Html$span,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$classList(
+					_List_fromArray(
+						[
+							_Utils_Tuple2('small', !canFit),
+							_Utils_Tuple2('rotate', rotate)
+						]))
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(name)
+				]));
+	});
+var $author$project$Event$statusToString = function (status) {
+	switch (status.$) {
+		case 'Going':
+			return 'Going';
+		case 'Interested':
+			return 'Interested';
+		case 'Skip':
+			return 'Skip';
+		default:
+			return 'Undecided';
+	}
+};
 var $elm$html$Html$Attributes$title = $elm$html$Html$Attributes$stringProperty('title');
+var $elm$core$String$toLower = _String_toLower;
 var $author$project$Clock$withTime = F2(
 	function (clock, time) {
 		return _Utils_update(
@@ -6979,15 +7054,24 @@ var $author$project$Clock$withTime = F2(
 			{time: time});
 	});
 var $author$project$Lineup$viewEvent = F3(
-	function (startTime, row, event) {
-		var eventStart = A2($author$project$Clock$withTime, startTime, event.starttime);
+	function (startTime, row, _v0) {
+		var name = _v0.name;
+		var id = _v0.id;
+		var status = _v0.status;
+		var starttime = _v0.starttime;
+		var endtime = _v0.endtime;
+		var eventStart = A2($author$project$Clock$withTime, startTime, starttime);
 		var quarterHours = A2($author$project$Lineup$totalQuarterHours, startTime, eventStart);
-		var eventEnd = A2($author$project$Clock$withTime, startTime, event.endtime);
+		var eventEnd = A2($author$project$Clock$withTime, startTime, endtime);
 		var length = A2($author$project$Lineup$totalQuarterHours, eventStart, eventEnd);
 		return A2(
 			$elm$html$Html$article,
 			_List_fromArray(
 				[
+					$elm$html$Html$Attributes$class('event'),
+					$elm$html$Html$Attributes$class(
+					$elm$core$String$toLower(
+						$author$project$Event$statusToString(status))),
 					$author$project$Lineup$style(
 					_List_fromArray(
 						[
@@ -7001,19 +7085,13 @@ var $author$project$Lineup$viewEvent = F3(
 							'grid-column-end',
 							$elm$core$String$fromInt((quarterHours + 1) + length))
 						])),
-					$elm$html$Html$Attributes$title(event.name),
+					$elm$html$Html$Attributes$title(name),
 					$elm$html$Html$Events$onClick(
-					$author$project$Lineup$ClickedEvent(event.id))
+					$author$project$Lineup$ClickedEvent(id))
 				]),
 			_List_fromArray(
 				[
-					A2(
-					$elm$html$Html$span,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text(event.name)
-						]))
+					A2($author$project$Lineup$renderName, name, length)
 				]));
 	});
 var $author$project$Lineup$viewEvents = F4(
@@ -7212,20 +7290,6 @@ var $author$project$Lineup$UpdateEvent = F2(
 		return {$: 'UpdateEvent', a: a, b: b};
 	});
 var $elm$html$Html$button = _VirtualDom_node('button');
-var $elm$core$Tuple$second = function (_v0) {
-	var y = _v0.b;
-	return y;
-};
-var $elm$html$Html$Attributes$classList = function (classes) {
-	return $elm$html$Html$Attributes$class(
-		A2(
-			$elm$core$String$join,
-			' ',
-			A2(
-				$elm$core$List$map,
-				$elm$core$Tuple$first,
-				A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
-};
 var $author$project$Event$statusToEmoji = function (status) {
 	switch (status.$) {
 		case 'Going':
@@ -7300,15 +7364,6 @@ var $author$project$Lineup$viewVenues = function (venues) {
 			},
 			venues));
 };
-var $elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
 var $author$project$Lineup$view = function (_v0) {
 	var ctx = _v0.ctx;
 	var selected = _v0.selected;
@@ -7469,6 +7524,23 @@ var $author$project$Main$viewSkeleton = F3(
 									_List_fromArray(
 										[
 											$elm$html$Html$text('Saturday')
+										])),
+									A2(
+									$elm$html$Html$a,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$href('popup'),
+											$elm$html$Html$Attributes$classList(
+											_List_fromArray(
+												[
+													_Utils_Tuple2(
+													'you-are-here',
+													_Utils_eq(schedule, $author$project$Context$Popup))
+												]))
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Popup')
 										]))
 								]))
 						]))

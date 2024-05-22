@@ -77,13 +77,13 @@ view { ctx, selected } =
 
 
 viewEvent : Clock -> Int -> Event -> Html Msg
-viewEvent startTime row event =
+viewEvent startTime row { name, id, status, starttime, endtime } =
     let
         eventStart =
-            Clock.withTime startTime event.starttime
+            Clock.withTime startTime starttime
 
         eventEnd =
-            Clock.withTime startTime event.endtime
+            Clock.withTime startTime endtime
 
         quarterHours =
             totalQuarterHours startTime eventStart
@@ -92,18 +92,59 @@ viewEvent startTime row event =
             totalQuarterHours eventStart eventEnd
     in
     Html.article
-        [ style
+        [ class "event"
+        , class <| String.toLower <| Event.statusToString <| status
+        , style
             [ ( "grid-row", String.fromInt (row + 1) )
             , ( "grid-column-start", String.fromInt (quarterHours + 1) )
             , ( "grid-column-end", String.fromInt (quarterHours + 1 + length) )
             ]
-        , title event.name
-        , onClick <| ClickedEvent event.id
+        , title name
+        , onClick <| ClickedEvent id
         ]
-        [ Html.span
-            []
-            [ Html.text event.name ]
+        [ renderName name length
         ]
+
+
+renderName : String -> Int -> Html msg
+renderName name length =
+    let
+        longest =
+            longestWordLength name
+
+        canFit =
+            length
+                > 1
+                && (longest + length - 1)
+                // length
+                <= 3
+                && ((String.length name + 0) // 6)
+                <= length
+                && wordCount name
+                <= length
+                && name
+                /= "The Northern Boys"
+
+        rotate =
+            length == 1
+    in
+    Html.span
+        [ classList [ ( "small", not canFit ), ( "rotate", rotate ) ] ]
+        [ Html.text name ]
+
+
+wordCount : String -> Int
+wordCount =
+    String.split " " >> List.length
+
+
+longestWordLength : String -> Int
+longestWordLength str =
+    str
+        |> String.split " "
+        |> List.map String.length
+        |> List.maximum
+        |> Maybe.withDefault 0
 
 
 eventsByVenue : List Event -> List { venue : String, events : List Event }

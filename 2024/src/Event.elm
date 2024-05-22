@@ -1,4 +1,4 @@
-module Event exposing (Event, Id, Status(..), decoder, encode, statusToEmoji)
+module Event exposing (Event, Id, Status(..), decoder, encode, statusToEmoji, statusToString)
 
 import Iso8601
 import Json.Decode as Dec exposing (Decoder)
@@ -30,20 +30,25 @@ statusToEmoji status =
             "🤷"
 
 
-encodeStatus : Status -> Value
-encodeStatus status =
+statusToString : Status -> String
+statusToString status =
     case status of
         Going ->
-            Enc.string "Going"
+            "Going"
 
         Interested ->
-            Enc.string "Interested"
+            "Interested"
 
         Skip ->
-            Enc.string "Skip"
+            "Skip"
 
         Undecided ->
-            Enc.string "Undecided"
+            "Undecided"
+
+
+encodeStatus : Status -> Value
+encodeStatus =
+    statusToString >> Enc.string
 
 
 decodeStatus : Decoder Status
