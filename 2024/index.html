@@ -13,9 +13,630 @@
     />
   </head>
   <body>
+    <div class="app"></div>
     <script>
-      var app = Elm.Main.init();
+      const friday = [
+        {
+          name: "Magnetic Spacemen",
+          venue: "De Poot",
+          starttime: "2024-05-24T18:30:00+02:00",
+          endtime: "2024-05-24T19:15:00+02:00",
+        },
+        {
+          name: "The Courettes",
+          venue: "De Poot",
+          starttime: "2024-05-24T20:15:00+02:00",
+          endtime: "2024-05-24T21:00:00+02:00",
+        },
+        {
+          name: "Bazzookas",
+          venue: "De Poot",
+          starttime: "2024-05-24T22:00:00+02:00",
+          endtime: "2024-05-24T23:00:00+02:00",
+        },
+        {
+          name: "Dishes",
+          venue: "Zwarte Ruiter",
+          starttime: "2024-05-24T18:15:00+02:00",
+          endtime: "2024-05-24T19:00:00+02:00",
+        },
+        {
+          name: "Hammok",
+          venue: "Zwarte Ruiter",
+          starttime: "2024-05-24T19:45:00+02:00",
+          endtime: "2024-05-24T20:30:00+02:00",
+        },
+        {
+          name: "The Sha-La-Lee's",
+          venue: "Zwarte Ruiter",
+          starttime: "2024-05-24T21:15:00+02:00",
+          endtime: "2024-05-24T22:00:00+02:00",
+        },
+        {
+          name: "Bad Breeding",
+          venue: "Zwarte Ruiter",
+          starttime: "2024-05-24T22:45:00+02:00",
+          endtime: "2024-05-24T23:30:00+02:00",
+        },
+        {
+          name: "Death Lens",
+          venue: "Zwarte Ruiter",
+          starttime: "2024-05-25T00:15:00+02:00",
+          endtime: "2024-05-25T01:00:00+02:00",
+        },
+        {
+          name: "The Tambles",
+          venue: "September",
+          starttime: "2024-05-24T18:00:00+02:00",
+          endtime: "2024-05-24T18:45:00+02:00",
+        },
+        {
+          name: "Sub Rockers",
+          venue: "September",
+          starttime: "2024-05-24T19:30:00+02:00",
+          endtime: "2024-05-24T20:15:00+02:00",
+        },
+        {
+          name: "Library Card",
+          venue: "September",
+          starttime: "2024-05-24T21:00:00+02:00",
+          endtime: "2024-05-24T21:45:00+02:00",
+        },
+        {
+          name: "Bo Gritz",
+          venue: "September",
+          starttime: "2024-05-24T22:30:00+02:00",
+          endtime: "2024-05-24T23:15:00+02:00",
+        },
+        {
+          name: "Eosine",
+          venue: "September",
+          starttime: "2024-05-25T00:00:00+02:00",
+          endtime: "2024-05-25T00:45:00+02:00",
+        },
+        {
+          name: "Chalk",
+          venue: "The Grey Space",
+          starttime: "2024-05-24T18:30:00+02:00",
+          endtime: "2024-05-24T19:15:00+02:00",
+        },
+        {
+          name: "Heath",
+          venue: "The Grey Space",
+          starttime: "2024-05-24T20:15:00+02:00",
+          endtime: "2024-05-24T21:00:00+02:00",
+        },
+        {
+          name: "Aerial Salad",
+          venue: "The Grey Space",
+          starttime: "2024-05-24T21:45:00+02:00",
+          endtime: "2024-05-24T22:30:00+02:00",
+        },
+        {
+          name: "Parker Fans",
+          venue: "The Grey Space",
+          starttime: "2024-05-24T23:15:00+02:00",
+          endtime: "2024-05-25T00:00:00+02:00",
+        },
+        {
+          name: "Staatseinde",
+          venue: "The Grey Space",
+          starttime: "2024-05-25T00:45:00+02:00",
+          endtime: "2024-05-25T01:30:00+02:00",
+        },
+        {
+          name: "Alien Chicks",
+          venue: "Paardcaf\u00e9",
+          starttime: "2024-05-24T17:30:00+02:00",
+          endtime: "2024-05-24T18:15:00+02:00",
+        },
+        {
+          name: "MSS Frnce",
+          venue: "Paardcaf\u00e9",
+          starttime: "2024-05-24T19:00:00+02:00",
+          endtime: "2024-05-24T19:45:00+02:00",
+        },
+        {
+          name: "Texoprint",
+          venue: "Paardcaf\u00e9",
+          starttime: "2024-05-24T20:30:00+02:00",
+          endtime: "2024-05-24T21:15:00+02:00",
+        },
+        {
+          name: "False Heads",
+          venue: "Paardcaf\u00e9",
+          starttime: "2024-05-24T22:15:00+02:00",
+          endtime: "2024-05-24T23:00:00+02:00",
+        },
+        {
+          name: "Vals Alarm",
+          venue: "Paardcaf\u00e9",
+          starttime: "2024-05-24T23:45:00+02:00",
+          endtime: "2024-05-25T00:30:00+02:00",
+        },
+        {
+          name: "Snayx",
+          venue: "Paard Kleine Zaal",
+          starttime: "2024-05-24T20:00:00+02:00",
+          endtime: "2024-05-24T20:45:00+02:00",
+        },
+        {
+          name: "Elmer",
+          venue: "Paard Kleine Zaal",
+          starttime: "2024-05-24T21:45:00+02:00",
+          endtime: "2024-05-24T22:30:00+02:00",
+        },
+        {
+          name: "Big Special",
+          venue: "Paard Kleine Zaal",
+          starttime: "2024-05-24T23:30:00+02:00",
+          endtime: "2024-05-25T00:15:00+02:00",
+        },
+        {
+          name: "Stone",
+          venue: "Paard Grote Zaal",
+          starttime: "2024-05-24T19:15:00+02:00",
+          endtime: "2024-05-24T20:15:00+02:00",
+        },
+        {
+          name: "Deadletter",
+          venue: "Paard Grote Zaal",
+          starttime: "2024-05-24T21:15:00+02:00",
+          endtime: "2024-05-24T22:15:00+02:00",
+        },
+        {
+          name: "Wodan Boys",
+          venue: "Paard Grote Zaal",
+          starttime: "2024-05-24T23:15:00+02:00",
+          endtime: "2024-05-25T00:15:00+02:00",
+        },
+        {
+          name: "Sunfruits",
+          venue: "Koorenhuis Foyer",
+          starttime: "2024-05-24T18:15:00+02:00",
+          endtime: "2024-05-24T19:00:00+02:00",
+        },
+        {
+          name: "Gut Health",
+          venue: "Koorenhuis Foyer",
+          starttime: "2024-05-24T19:45:00+02:00",
+          endtime: "2024-05-24T20:30:00+02:00",
+        },
+        {
+          name: "Dr Sure's Unusual Practice",
+          venue: "Koorenhuis Foyer",
+          starttime: "2024-05-24T21:15:00+02:00",
+          endtime: "2024-05-24T22:00:00+02:00",
+        },
+        {
+          name: "Barino Koevoet & The Duijmschpijkers",
+          venue: "Koorenhuis Foyer",
+          starttime: "2024-05-24T22:45:00+02:00",
+          endtime: "2024-05-24T23:30:00+02:00",
+        },
+        {
+          name: "No Prisoners",
+          venue: "Koorenhuis",
+          starttime: "2024-05-24T19:00:00+02:00",
+          endtime: "2024-05-24T19:45:00+02:00",
+        },
+        {
+          name: "Tusky",
+          venue: "Koorenhuis",
+          starttime: "2024-05-24T20:30:00+02:00",
+          endtime: "2024-05-24T21:15:00+02:00",
+        },
+        {
+          name: "W!zard",
+          venue: "Koorenhuis",
+          starttime: "2024-05-24T22:15:00+02:00",
+          endtime: "2024-05-24T23:00:00+02:00",
+        },
+        {
+          name: "Heavy Geit Karaok\u00e9",
+          venue: "Gekke Geit",
+          starttime: "2024-05-24T21:00:00+02:00",
+          endtime: "2024-05-25T01:30:00+02:00",
+        },
+      ];
+    </script>
+    <script>
+      const saturday = [
+        {
+          name: "Half Cab",
+          venue: "De Poot",
+          starttime: "2024-05-25T16:00:00+02:00",
+          endtime: "2024-05-25T17:00:00+02:00",
+        },
+        {
+          name: "Boss Capone & Patsy",
+          venue: "De Poot",
+          starttime: "2024-05-25T18:00:00+02:00",
+          endtime: "2024-05-25T19:00:00+02:00",
+        },
+        {
+          name: "Money & The Man",
+          venue: "De Poot",
+          starttime: "2024-05-25T20:00:00+02:00",
+          endtime: "2024-05-25T21:00:00+02:00",
+        },
+        {
+          name: "Guerrilla Radio",
+          venue: "De Poot",
+          starttime: "2024-05-25T22:00:00+02:00",
+          endtime: "2024-05-25T23:00:00+02:00",
+        },
+        {
+          name: "Het Universumpje",
+          venue: "Zwarte Ruiter",
+          starttime: "2024-05-25T18:15:00+02:00",
+          endtime: "2024-05-25T19:00:00+02:00",
+        },
+        {
+          name: "Whorses",
+          venue: "Zwarte Ruiter",
+          starttime: "2024-05-25T19:45:00+02:00",
+          endtime: "2024-05-25T20:30:00+02:00",
+        },
+        {
+          name: "Naked Lungs",
+          venue: "Zwarte Ruiter",
+          starttime: "2024-05-25T21:15:00+02:00",
+          endtime: "2024-05-25T22:00:00+02:00",
+        },
+        {
+          name: "Girls in Synthesis",
+          venue: "Zwarte Ruiter",
+          starttime: "2024-05-25T22:45:00+02:00",
+          endtime: "2024-05-25T23:30:00+02:00",
+        },
+        {
+          name: "Private Function",
+          venue: "Zwarte Ruiter",
+          starttime: "2024-05-26T00:15:00+02:00",
+          endtime: "2024-05-26T01:00:00+02:00",
+        },
+        {
+          name: "Holiday Ghosts",
+          venue: "September",
+          starttime: "2024-05-25T17:30:00+02:00",
+          endtime: "2024-05-25T18:15:00+02:00",
+        },
+        {
+          name: "Snake Eyes",
+          venue: "September",
+          starttime: "2024-05-25T19:00:00+02:00",
+          endtime: "2024-05-25T19:45:00+02:00",
+        },
+        {
+          name: "Dressed Like Boys",
+          venue: "September",
+          starttime: "2024-05-25T20:30:00+02:00",
+          endtime: "2024-05-25T21:15:00+02:00",
+        },
+        {
+          name: "Projector",
+          venue: "September",
+          starttime: "2024-05-25T22:00:00+02:00",
+          endtime: "2024-05-25T22:45:00+02:00",
+        },
+        {
+          name: "Taxitaxi",
+          venue: "September",
+          starttime: "2024-05-25T23:30:00+02:00",
+          endtime: "2024-05-26T00:15:00+02:00",
+        },
+        {
+          name: "Magic Tom & Yuri",
+          venue: "GR8",
+          starttime: "2024-05-25T21:45:00+02:00",
+          endtime: "2024-05-25T22:30:00+02:00",
+        },
+        {
+          name: "Brorlab",
+          venue: "The Grey Space",
+          starttime: "2024-05-25T19:30:00+02:00",
+          endtime: "2024-05-25T20:15:00+02:00",
+        },
+        {
+          name: "Getdown Services",
+          venue: "The Grey Space",
+          starttime: "2024-05-25T21:00:00+02:00",
+          endtime: "2024-05-25T21:45:00+02:00",
+        },
+        {
+          name: "Plastic Persoon",
+          venue: "The Grey Space",
+          starttime: "2024-05-25T22:30:00+02:00",
+          endtime: "2024-05-25T23:15:00+02:00",
+        },
+        {
+          name: "Pol",
+          venue: "The Grey Space",
+          starttime: "2024-05-26T00:00:00+02:00",
+          endtime: "2024-05-26T00:45:00+02:00",
+        },
+        {
+          name: "Dubinski",
+          venue: "Paardcaf\u00e9",
+          starttime: "2024-05-25T17:30:00+02:00",
+          endtime: "2024-05-25T18:15:00+02:00",
+        },
+        {
+          name: "Tijger Tijger",
+          venue: "Paardcaf\u00e9",
+          starttime: "2024-05-25T19:00:00+02:00",
+          endtime: "2024-05-25T19:45:00+02:00",
+        },
+        {
+          name: "Bowl",
+          venue: "Paardcaf\u00e9",
+          starttime: "2024-05-25T20:30:00+02:00",
+          endtime: "2024-05-25T21:15:00+02:00",
+        },
+        {
+          name: "Mengers",
+          venue: "Paardcaf\u00e9",
+          starttime: "2024-05-25T22:00:00+02:00",
+          endtime: "2024-05-25T22:45:00+02:00",
+        },
+        {
+          name: "Cesars Palace",
+          venue: "Paardcaf\u00e9",
+          starttime: "2024-05-25T23:30:00+02:00",
+          endtime: "2024-05-26T00:15:00+02:00",
+        },
+        {
+          name: "Modder",
+          venue: "Paard Kleine Zaal",
+          starttime: "2024-05-25T20:00:00+02:00",
+          endtime: "2024-05-25T20:45:00+02:00",
+        },
+        {
+          name: "The Northern Boys",
+          venue: "Paard Kleine Zaal",
+          starttime: "2024-05-25T21:45:00+02:00",
+          endtime: "2024-05-25T22:30:00+02:00",
+        },
+        {
+          name: "Chalk",
+          venue: "Paard Kleine Zaal",
+          starttime: "2024-05-25T23:30:00+02:00",
+          endtime: "2024-05-26T00:30:00+02:00",
+        },
+        {
+          name: "Cosmo",
+          venue: "Paard Grote Zaal",
+          starttime: "2024-05-25T19:15:00+02:00",
+          endtime: "2024-05-25T19:30:00+02:00",
+        },
+        {
+          name: "Toprot",
+          venue: "Paard Grote Zaal",
+          starttime: "2024-05-25T19:30:00+02:00",
+          endtime: "2024-05-25T19:45:00+02:00",
+        },
+        {
+          name: "Libertat",
+          venue: "Paard Grote Zaal",
+          starttime: "2024-05-25T19:45:00+02:00",
+          endtime: "2024-05-25T20:00:00+02:00",
+        },
+        {
+          name: "Asbest Boys",
+          venue: "Paard Grote Zaal",
+          starttime: "2024-05-25T20:00:00+02:00",
+          endtime: "2024-05-25T20:15:00+02:00",
+        },
+        {
+          name: "Battlesnake",
+          venue: "Paard Grote Zaal",
+          starttime: "2024-05-25T21:00:00+02:00",
+          endtime: "2024-05-25T22:00:00+02:00",
+        },
+        {
+          name: "John Coffey",
+          venue: "Paard Grote Zaal",
+          starttime: "2024-05-25T23:00:00+02:00",
+          endtime: "2024-05-26T00:00:00+02:00",
+        },
+        {
+          name: "Loveth Besamoh",
+          venue: "Koorenhuis Foyer",
+          starttime: "2024-05-25T18:00:00+02:00",
+          endtime: "2024-05-25T18:45:00+02:00",
+        },
+        {
+          name: "Kaboutertje Putlucht",
+          venue: "Koorenhuis Foyer",
+          starttime: "2024-05-25T19:30:00+02:00",
+          endtime: "2024-05-25T20:15:00+02:00",
+        },
+        {
+          name: "Tommy Cossack & The Degenerators",
+          venue: "Koorenhuis Foyer",
+          starttime: "2024-05-25T21:00:00+02:00",
+          endtime: "2024-05-25T21:45:00+02:00",
+        },
+        {
+          name: "Hallan",
+          venue: "Koorenhuis Foyer",
+          starttime: "2024-05-25T22:30:00+02:00",
+          endtime: "2024-05-25T23:15:00+02:00",
+        },
+        {
+          name: "Cooper T",
+          venue: "Koorenhuis",
+          starttime: "2024-05-25T18:45:00+02:00",
+          endtime: "2024-05-25T19:30:00+02:00",
+        },
+        {
+          name: "Arson",
+          venue: "Koorenhuis",
+          starttime: "2024-05-25T20:15:00+02:00",
+          endtime: "2024-05-25T21:00:00+02:00",
+        },
+        {
+          name: "Adult DVD",
+          venue: "Koorenhuis",
+          starttime: "2024-05-25T21:45:00+02:00",
+          endtime: "2024-05-25T22:30:00+02:00",
+        },
+        {
+          name: "The Southern River Band",
+          venue: "Koorenhuis",
+          starttime: "2024-05-25T23:15:00+02:00",
+          endtime: "2024-05-26T00:00:00+02:00",
+        },
+        {
+          name: "Heavy Geit Karaok\u00e9",
+          venue: "Gekke Geit",
+          starttime: "2024-05-25T21:00:00+02:00",
+          endtime: "2024-05-26T01:30:00+02:00",
+        },
+      ];
+    </script>
+    <script>
+      const popup = [
+        {
+          name: "Yaffa",
+          venue: "Skatestore",
+          starttime: "2024-05-25T14:30:00+02:00",
+          endtime: "2024-05-25T15:00:00+02:00",
+        },
+        {
+          name: "Cosmo",
+          venue: "Skatestore",
+          starttime: "2024-05-25T16:00:00+02:00",
+          endtime: "2024-05-25T16:30:00+02:00",
+        },
+        {
+          name: "Yan Lale",
+          venue: "Kompaan Binnenhaven",
+          starttime: "2024-05-25T15:15:00+02:00",
+          endtime: "2024-05-25T15:45:00+02:00",
+        },
+        {
+          name: "Plonki",
+          venue: "Kompaan Binnenhaven",
+          starttime: "2024-05-25T16:45:00+02:00",
+          endtime: "2024-05-25T17:15:00+02:00",
+        },
+        {
+          name: "My Girlfriend",
+          venue: "3345 Recordstore",
+          starttime: "2024-05-25T14:00:00+02:00",
+          endtime: "2024-05-25T14:30:00+02:00",
+        },
+        {
+          name: "Red Vain",
+          venue: "3345 Recordstore",
+          starttime: "2024-05-25T15:30:00+02:00",
+          endtime: "2024-05-25T16:00:00+02:00",
+        },
+        {
+          name: "Motion Pictures",
+          venue: "O'Casey's",
+          starttime: "2024-05-25T14:45:00+02:00",
+          endtime: "2024-05-25T15:15:00+02:00",
+        },
+        {
+          name: "Polarized",
+          venue: "O'Casey's",
+          starttime: "2024-05-25T16:15:00+02:00",
+          endtime: "2024-05-25T16:45:00+02:00",
+        },
+        {
+          name: "Libertat",
+          venue: "De Poortbar",
+          starttime: "2024-05-25T14:15:00+02:00",
+          endtime: "2024-05-25T14:45:00+02:00",
+        },
+        {
+          name: "Autoboom",
+          venue: "De Poortbar",
+          starttime: "2024-05-25T15:45:00+02:00",
+          endtime: "2024-05-25T16:15:00+02:00",
+        },
+        {
+          name: "Eelco",
+          venue: "De Poortzaal",
+          starttime: "2024-05-25T13:30:00+02:00",
+          endtime: "2024-05-25T14:00:00+02:00",
+        },
+        {
+          name: "Boost",
+          venue: "De Poortzaal",
+          starttime: "2024-05-25T15:00:00+02:00",
+          endtime: "2024-05-25T15:30:00+02:00",
+        },
+        {
+          name: "Paint It",
+          venue: "De Poortzaal",
+          starttime: "2024-05-25T16:30:00+02:00",
+          endtime: "2024-05-25T16:45:00+02:00",
+        },
+        {
+          name: "Achterlicht",
+          venue: "Mad Science",
+          starttime: "2024-05-25T14:00:00+02:00",
+          endtime: "2024-05-25T14:30:00+02:00",
+        },
+        {
+          name: "Coco Cocaine",
+          venue: "Mad Science",
+          starttime: "2024-05-25T15:30:00+02:00",
+          endtime: "2024-05-25T16:00:00+02:00",
+        },
+        {
+          name: "Lois Ava",
+          venue: "Beest Boulders",
+          starttime: "2024-05-25T14:45:00+02:00",
+          endtime: "2024-05-25T15:15:00+02:00",
+        },
+        {
+          name: "Lilo",
+          venue: "Beest Boulders",
+          starttime: "2024-05-25T16:15:00+02:00",
+          endtime: "2024-05-25T16:45:00+02:00",
+        },
+        {
+          name: "Asbest Boys",
+          venue: "Spuiplein (Kafka Stage)",
+          starttime: "2024-05-25T14:30:00+02:00",
+          endtime: "2024-05-25T15:00:00+02:00",
+        },
+        {
+          name: "Toprot",
+          venue: "Spuiplein (Kafka Stage)",
+          starttime: "2024-05-25T16:00:00+02:00",
+          endtime: "2024-05-25T16:30:00+02:00",
+        },
+        {
+          name: "Joris Anne",
+          venue: "Achterom 27",
+          starttime: "2024-05-25T13:45:00+02:00",
+          endtime: "2024-05-25T14:15:00+02:00",
+        },
+        {
+          name: "Dunn",
+          venue: "Achterom 27",
+          starttime: "2024-05-25T15:15:00+02:00",
+          endtime: "2024-05-25T15:45:00+02:00",
+        },
+      ];
+    </script>
+
+    <script>
+      var app = Elm.Main.init({
+        node: document.getElementById("app"),
+        flags: {
+          time: Date.now(),
+          friday: friday,
+          saturday: saturday,
+          popup: popup,
+        },
+      });
     </script>
   </body>
 </html>
-
