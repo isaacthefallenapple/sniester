@@ -25,15 +25,15 @@ body {
 }
 
 h3 {
-  font-size: 1rem;
+  font-size: 2rem;
 }
 
 .lineup {
   text-transform: uppercase;
 
-  --row-size: 2.5rem;
-  --column-size: 2rem;
-  --first-row-size: 3rem;
+  --row-size: 5.5rem;
+  --column-size: 3rem;
+  --first-row-size: 5.5rem;
   --gutter: 1em;
 
   display: grid;
@@ -66,7 +66,7 @@ h3 {
 
   > div {
     rotate: -75deg;
-    translate: 0.5rem;
+    translate: 0.75rem;
     transform-origin: bottom left;
     margin-block-start: auto;
   }
@@ -90,7 +90,7 @@ h3 {
   grid-template-columns: repeat(var(--columns), var(--column-size));
   grid-template-rows: repeat(var(--rows), var(--row-size));
 
-  --grid-width-h: 0.5px;
+  --grid-width-h: 1px;
   --grid-width-v: 1px;
   --grid-color-h: var(--clr-purple);
   --grid-color-v: var(--clr-yellow);
@@ -128,5 +128,5 @@ h3 {
   position: sticky;
   left: 0;
   z-index: 999;
-  margin-inline-end: 0.5rem;
+  margin-inline-end: 1.5rem;
 }
