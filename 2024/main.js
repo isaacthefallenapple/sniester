@@ -6818,8 +6818,8 @@ var $author$project$Lineup$findStartAndEnd = function (events) {
 			return _Debug_todo(
 				'Lineup',
 				{
-					start: {line: 189, column: 29},
-					end: {line: 189, column: 39}
+					start: {line: 193, column: 29},
+					end: {line: 193, column: 39}
 				})('Maybe was Nothing');
 		});
 	return _Utils_Tuple2(
@@ -7327,33 +7327,40 @@ var $author$project$Lineup$view = function (_v0) {
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('lineup')
+				$elm$html$Html$Attributes$class('lineup-container')
 			]),
-		_Utils_ap(
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('blackout-box')
-						]),
-					_List_Nil),
-					A2($author$project$Lineup$viewTimeline, startTime, quarterHours),
-					$author$project$Lineup$viewVenues(
-					A2(
-						$elm$core$List$map,
-						function ($) {
-							return $.venue;
-						},
-						byVenue)),
-					A4(
-					$author$project$Lineup$viewEvents,
-					byVenue,
-					startTime,
-					$elm$core$List$length(byVenue),
-					quarterHours + 1)
-				]),
+		A2(
+			$elm$core$List$cons,
+			A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('lineup')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('blackout-box')
+							]),
+						_List_Nil),
+						A2($author$project$Lineup$viewTimeline, startTime, quarterHours),
+						$author$project$Lineup$viewVenues(
+						A2(
+							$elm$core$List$map,
+							function ($) {
+								return $.venue;
+							},
+							byVenue)),
+						A4(
+						$author$project$Lineup$viewEvents,
+						byVenue,
+						startTime,
+						$elm$core$List$length(byVenue),
+						quarterHours + 1)
+					])),
 			A2(
 				$elm$core$Maybe$withDefault,
 				_List_Nil,

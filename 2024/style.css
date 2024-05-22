@@ -63,7 +63,7 @@ a {
 
   display: grid;
   grid-template-columns: fit-content(8ch) fit-content(100vw);
-  grid-template-rows: var(--first-row-size) 1fr var(--first-row-size);
+  grid-template-rows: var(--first-row-size) 1fr;
   gap: var(--gutter) 0;
 
   overflow: scroll;
@@ -78,10 +78,6 @@ a {
 
   > .events {
     grid-area: 2 / 2;
-  }
-
-  > .status-updater {
-    grid-area: 3 / 2;
   }
 }
 
@@ -153,10 +149,30 @@ a {
 }
 
 .status-updater {
-  font-size: 4rem;
+  font-size: 3rem;
+  display: flex;
+  gap: 0.2em;
+
+  width: max-content;
+
+  background-color: var(--clr-yellow);
+  margin-inline: auto;
+  padding-inline: 0.25em;
+  padding-block: 0.2em;
+  border-radius: 100vmax;
+
+  > button {
+    width: max-width;
+    padding: 0.2em;
+    vertical-align: text-bottom;
+    border-radius: 100vmax;
+    aspect-ratio: 1;
+    background-color: transparent;
+    border: 8px solid var(--clr-purple);
+  }
 
   > .current-status {
-    background-color: var(--clr-yellow);
+    background-color: var(--clr-purple);
   }
 }
 

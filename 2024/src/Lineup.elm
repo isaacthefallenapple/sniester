@@ -61,15 +61,19 @@ view { ctx, selected } =
             eventsByVenue events
     in
     Html.div
-        [ class "lineup"
-        ]
-    <|
-        [ Html.div [ class "blackout-box" ] []
-        , viewTimeline startTime quarterHours
-        , viewVenues <| List.map .venue byVenue
-        , viewEvents byVenue startTime (List.length byVenue) (quarterHours + 1)
-        ]
-            ++ Maybe.withDefault [] (Maybe.map (viewUpdater >> List.singleton) (Maybe.andThen (Context.getEvent ctx) selected))
+        [ class "lineup-container" ]
+        ((Html.div
+            [ class "lineup"
+            ]
+          <|
+            [ Html.div [ class "blackout-box" ] []
+            , viewTimeline startTime quarterHours
+            , viewVenues <| List.map .venue byVenue
+            , viewEvents byVenue startTime (List.length byVenue) (quarterHours + 1)
+            ]
+         )
+            :: Maybe.withDefault [] (Maybe.map (viewUpdater >> List.singleton) (Maybe.andThen (Context.getEvent ctx) selected))
+        )
 
 
 viewEvent : Clock -> Int -> Event -> Html Msg
