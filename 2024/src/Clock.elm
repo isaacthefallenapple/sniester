@@ -71,11 +71,6 @@ toSecond { zone, time } =
     Time.toSecond zone time
 
 
-toMillis : Clock -> Int
-toMillis { zone, time } =
-    Time.toMillis zone time
-
-
 toPosixMillis : Clock -> Int
 toPosixMillis { time } =
     Time.posixToMillis time
