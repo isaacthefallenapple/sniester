@@ -97,3 +97,23 @@ mapMillis { time, zone } f =
             Time.posixToMillis time
     in
     { zone = zone, time = Time.millisToPosix <| f millis }
+
+
+duration : Clock -> Clock -> Int
+duration start end =
+    toPosixMillis end - toPosixMillis start
+
+
+isBetween : Clock -> Clock -> Clock -> Bool
+isBetween lo hi v =
+    let
+        loM =
+            toPosixMillis lo
+
+        hiM =
+            toPosixMillis hi
+
+        vM =
+            toPosixMillis v
+    in
+    loM <= vM && vM <= hiM

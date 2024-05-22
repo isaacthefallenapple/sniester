@@ -45,11 +45,14 @@ update msg ({ ctx } as model) =
 view : Model -> Html Msg
 view { ctx, selected } =
     let
+        currentTime =
+            ctx.clock
+
         events =
             getScheduled ctx
 
         withTime =
-            Clock.withTime ctx.clock
+            Clock.withTime currentTime
 
         ( startTime, endTime ) =
             Tuple.mapBoth withTime withTime <| findStartAndEnd events
@@ -59,6 +62,13 @@ view { ctx, selected } =
 
         byVenue =
             eventsByVenue events
+
+        indicator =
+            if not <| Clock.isBetween startTime endTime currentTime then
+                Nothing
+
+            else
+                Just <| toFloat (Clock.duration startTime currentTime) / toFloat (Clock.duration startTime (Clock.addMinutes endTime 15))
     in
     Html.div
         [ class "lineup-container" ]
@@ -69,7 +79,7 @@ view { ctx, selected } =
             [ Html.div [ class "blackout-box" ] []
             , viewTimeline startTime quarterHours
             , viewVenues <| List.map .venue byVenue
-            , viewEvents byVenue startTime (List.length byVenue) (quarterHours + 1)
+            , viewEvents byVenue startTime (List.length byVenue) (quarterHours + 1) indicator
             ]
          )
             :: Maybe.withDefault [] (Maybe.map (viewUpdater >> List.singleton) (Maybe.andThen (Context.getEvent ctx) selected))
@@ -201,14 +211,26 @@ viewVenues venues =
         List.map (\s -> Html.div [] [ Html.text s ]) venues
 
 
-viewEvents : List { venue : String, events : List Event } -> Clock -> Int -> Int -> Html Msg
-viewEvents events startTime rows columns =
+viewEvents : List { venue : String, events : List Event } -> Clock -> Int -> Int -> Maybe Float -> Html Msg
+viewEvents events startTime rows columns timeIndicator =
     Html.div
         [ class "events"
-        , style
+        , classList
+            [ ( "time-indicator"
+              , timeIndicator
+                    |> Maybe.map (\_ -> True)
+                    |> Maybe.withDefault False
+              )
+            ]
+        , style <|
             [ ( "--rows", String.fromInt rows )
             , ( "--columns", String.fromInt columns )
             ]
+                ++ (timeIndicator
+                        |> Maybe.map (\p -> ( "--time-indicator-position", String.fromFloat (p * 100.0) ++ "%" ))
+                        |> Maybe.map List.singleton
+                        |> Maybe.withDefault []
+                   )
         ]
     <|
         (events
