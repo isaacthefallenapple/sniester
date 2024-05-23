@@ -4,6 +4,7 @@ import Browser.Navigation as Nav
 import Clock exposing (Clock)
 import Event exposing (Event)
 import Json.Encode as Enc
+import Time
 import Url exposing (Url)
 
 
@@ -115,6 +116,11 @@ scheduleToString schedule =
 
         Popup ->
             "Popup"
+
+
+setTime : Context -> Time.Posix -> Context
+setTime ({ clock } as ctx) newTime =
+    { ctx | clock = Clock.withTime clock newTime }
 
 
 scheduleToPath : Schedule -> String

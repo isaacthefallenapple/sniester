@@ -43,6 +43,7 @@ type Msg
     | UpdateEvent Event.Id Event.Status
     | LineupMsg Lineup.Msg
     | DayToggled Context.Schedule
+    | CurrentTime Time.Posix
 
 
 
@@ -184,6 +185,23 @@ update msg model =
             in
             ( Lineup newModel, Cmd.map LineupMsg cmds )
 
+        ( CurrentTime currentTime, Lineup { ctx } ) ->
+            let
+                clock =
+                    Clock.inNL currentTime
+
+                minute =
+                    Clock.toMinute clock
+
+                fakeTime =
+                    Iso8601.toTime ("2024-05-24T18:" ++ String.padLeft 2 '0' (String.fromInt minute) ++ ":00+02:00")
+                        |> Result.withDefault currentTime
+
+                _ =
+                    Debug.log "fakeTime" (Clock.toString clock)
+            in
+            ( Lineup <| Lineup.new (Context.setTime ctx fakeTime), Cmd.none )
+
         _ ->
             ( model, Cmd.none )
 
@@ -194,7 +212,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.none
+    Time.every (60 * 1000) CurrentTime
 
 
 

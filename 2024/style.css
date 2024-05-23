@@ -88,6 +88,8 @@ main {
   width: max-content;
   max-width: 100%;
 
+  height: 100%;
+
   margin-inline: auto;
 }
 
@@ -97,13 +99,14 @@ main {
 
   --row-size: 2.25em;
   --column-size: 3ch;
-  --first-row-size: 5ch;
+  --first-row-size: 5.5ch;
   --gutter: 0.25em;
 
   display: grid;
   grid-template-columns: fit-content(8ch) fit-content(100vw);
   grid-template-rows: var(--first-row-size) 1fr;
-  gap: var(--gutter) 0;
+
+  max-height: 80%;
 
   overflow: auto;
 
@@ -126,14 +129,20 @@ main {
   position: sticky;
   top: 0;
 
+  padding-block-end: var(--gutter);
+
+  background-color: var(--clr-black);
+
   color: var(--clr-white);
 
   > div {
     rotate: -75deg;
-    translate: 0.75rem;
+    translate: 0.5em;
     transform-origin: bottom left;
     margin-block-start: auto;
   }
+
+  z-index: 500;
 }
 
 .venues {
@@ -143,12 +152,14 @@ main {
   left: 0;
   align-items: center;
   text-align: end;
-  padding-inline-end: 1em;
+
+  margin-inline-end: 0.3em;
+  padding-inline-end: 0.2em;
 
   color: var(--clr-yellow);
   background-color: var(--clr-black);
 
-  z-index: 999;
+  z-index: 500;
 }
 
 .events {
@@ -245,10 +256,11 @@ main {
 
   top: 0;
   bottom: 0;
-  border-left: 8px dashed var(--clr-purple);
+  --stroke-width: 4px;
+  border-left: var(--stroke-width) dashed var(--clr-white);
   opacity: 90%;
-  left: calc(var(--time-indicator-position) - 4px);
-  z-index: 2;
+  left: calc(var(--time-indicator-position) - var(--stroke-width) / 2);
+  z-index: 999;
   pointer-events: none;
 }
 
@@ -257,6 +269,8 @@ main {
   gap: 0.2em;
 
   width: max-content;
+
+  font-size: 0.75em;
 
   background-color: var(--clr-yellow);
   margin-inline: auto;
@@ -283,8 +297,10 @@ main {
   background-color: var(--clr-black);
   position: sticky;
   left: 0;
+  top: 0;
   z-index: 999;
-  margin-inline-end: 0.25em;
+  margin-inline-end: 0.3em;
+  padding-block-end: var(--gutter);
 }
 
 .day-toggle {
