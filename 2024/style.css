@@ -35,10 +35,13 @@ body {
   font-family: "Passion One", sans-serif;
   font-weight: 400;
   font-style: normal;
-  font-size: 4rem;
+  font-size: clamp(1rem, 1rem + 2vw, 1.5rem);
   line-height: 1;
   background-color: var(--clr-black);
   text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  -moz-text-size-adjust: none;
+  -ms-text-size-adjust: none;
 }
 
 a {
@@ -82,11 +85,11 @@ main {
 
 .lineup {
   text-transform: uppercase;
-  font-size: clamp(2.5rem, 1rem + 2vw, 3rem);
+  font-size: clamp(0.75rem, 0.5rem + 2vw, 1.125rem);
 
-  --row-size: 5.5rem;
+  --row-size: 2.25em;
   --column-size: 3ch;
-  --first-row-size: clamp(5.5rem, 2rem + 4vw, 7.5rem);
+  --first-row-size: 5ch;
   --gutter: 0.25em;
 
   display: grid;
@@ -181,7 +184,7 @@ main {
   position: relative;
 
   .small {
-    font-size: 1.5rem;
+    font-size: 0.5em;
   }
 
   .rotate {
@@ -236,7 +239,6 @@ main {
 }
 
 .status-updater {
-  font-size: 3rem;
   display: flex;
   gap: 0.2em;
 
@@ -255,7 +257,7 @@ main {
     border-radius: 100vmax;
     aspect-ratio: 1;
     background-color: transparent;
-    border: 8px solid var(--clr-purple);
+    border: 4px solid var(--clr-purple);
   }
 
   > .current-status {
@@ -268,7 +270,7 @@ main {
   position: sticky;
   left: 0;
   z-index: 999;
-  margin-inline-end: 1.5rem;
+  margin-inline-end: 0.25em;
 }
 
 .day-toggle {
@@ -277,7 +279,6 @@ main {
   --gutter: 1em;
 
   color: var(--clr-white);
-  font-size: 3rem;
 
   width: max-content;
 
@@ -314,7 +315,7 @@ main {
     display: flex;
     align-items: center;
 
-    border: 5px solid var(--clr-yellow);
+    border: 2px solid var(--clr-yellow);
 
     > div {
       height: 100%;
