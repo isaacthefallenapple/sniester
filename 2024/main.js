@@ -8450,7 +8450,9 @@ var $author$project$Main$viewSaturdayToggle = function (schedule) {
 					]))
 			]));
 };
+var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
 var $elm$html$Html$h3 = _VirtualDom_node('h3');
+var $elm$html$Html$label = _VirtualDom_node('label');
 var $author$project$Main$marquee = function (content) {
 	var marqueeContent = A2(
 		$elm$html$Html$div,
@@ -8475,62 +8477,95 @@ var $author$project$Main$viewUpNext = function (maybeEvent) {
 	} else {
 		var event = maybeEvent.a;
 		return A2(
-			$elm$html$Html$article,
+			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('up-next-event')
+					$elm$html$Html$Attributes$class('up-next-container')
 				]),
 			_List_fromArray(
 				[
 					A2(
-					$elm$html$Html$div,
+					$elm$html$Html$input,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('up-next-eyebrow')
+							$elm$html$Html$Attributes$type_('checkbox'),
+							$elm$html$Html$Attributes$id('up-next-expander')
+						]),
+					_List_Nil),
+					A2(
+					$elm$html$Html$article,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('up-next-event')
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text('Up Next')
-						])),
-					$author$project$Main$marquee(
-					A2(
-						$elm$html$Html$h3,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('up-next-name')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(event.name)
-							]))),
-					A2(
-					$elm$html$Html$span,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('up-next-time')
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text(
-							$author$project$Clock$toString(
-								$author$project$Clock$inNL(event.starttime)))
-						])),
-					A2(
-					$elm$html$Html$span,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text(' @ ')
-						])),
-					A2(
-					$elm$html$Html$span,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('up-next-venue')
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text(event.venue)
+							A2(
+							$elm$html$Html$label,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$for('up-next-expander')
+								]),
+							_List_Nil),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('up-next-eyebrow')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Up Next')
+								])),
+							$author$project$Main$marquee(
+							A2(
+								$elm$html$Html$h3,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('up-next-name')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(event.name)
+									]))),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('up-next-extra-info')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$span,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('up-next-time')
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text(
+											$author$project$Clock$toString(
+												$author$project$Clock$inNL(event.starttime)))
+										])),
+									A2(
+									$elm$html$Html$span,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text(' @ ')
+										])),
+									A2(
+									$elm$html$Html$span,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('up-next-venue')
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text(event.venue)
+										]))
+								]))
 						]))
 				]));
 	}

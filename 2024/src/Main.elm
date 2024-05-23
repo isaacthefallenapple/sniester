@@ -7,7 +7,7 @@ import Context exposing (Context, Events, Schedule(..))
 import Debug exposing (todo)
 import Event exposing (Event)
 import Html exposing (Html)
-import Html.Attributes exposing (checked, class, classList, href, type_)
+import Html.Attributes exposing (checked, class, classList, for, href, id, type_)
 import Html.Events exposing (onClick)
 import Http
 import Iso8601
@@ -75,24 +75,31 @@ viewUpNext maybeEvent =
             Html.div [] []
 
         Just event ->
-            Html.article
-                [ class "up-next-event" ]
-                [ Html.div
-                    [ class "up-next-eyebrow" ]
-                    [ Html.text "Up Next" ]
-                , marquee <|
-                    Html.h3
-                        [ class "up-next-name" ]
-                        [ Html.text event.name ]
-                , Html.span
-                    [ class "up-next-time" ]
-                    [ Html.text <| Clock.toString (Clock.inNL event.starttime) ]
-                , Html.span
-                    []
-                    [ Html.text " @ " ]
-                , Html.span
-                    [ class "up-next-venue" ]
-                    [ Html.text event.venue ]
+            Html.div [ class "up-next-container" ]
+                [ Html.input [ type_ "checkbox", id "up-next-expander" ] []
+                , Html.article
+                    [ class "up-next-event" ]
+                    [ Html.label [ for "up-next-expander" ] []
+                    , Html.div
+                        [ class "up-next-eyebrow" ]
+                        [ Html.text "Up Next" ]
+                    , marquee <|
+                        Html.h3
+                            [ class "up-next-name" ]
+                            [ Html.text event.name ]
+                    , Html.div
+                        [ class "up-next-extra-info" ]
+                        [ Html.span
+                            [ class "up-next-time" ]
+                            [ Html.text <| Clock.toString (Clock.inNL event.starttime) ]
+                        , Html.span
+                            []
+                            [ Html.text " @ " ]
+                        , Html.span
+                            [ class "up-next-venue" ]
+                            [ Html.text event.venue ]
+                        ]
+                    ]
                 ]
 
 
