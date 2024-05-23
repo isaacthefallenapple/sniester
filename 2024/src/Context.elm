@@ -2,6 +2,7 @@ module Context exposing (..)
 
 import Browser.Navigation as Nav
 import Clock exposing (Clock)
+import Debug exposing (todo)
 import Event exposing (Event)
 import Json.Encode as Enc
 import Time
@@ -135,3 +136,37 @@ encodeEvents ctx =
         , ( "saturday", Enc.list Event.encode ctx.events.saturday )
         , ( "popup", Enc.list Event.encode ctx.events.popup )
         ]
+
+
+upNext : Context -> Maybe Event
+upNext { events, clock } =
+    upNextIn events.friday clock
+        |> orElse (upNextIn events.saturday clock)
+        |> orElse (upNextIn events.popup clock)
+
+
+upNextIn : List Event -> Clock -> Maybe Event
+upNextIn events clock =
+    let
+        currentTime =
+            Clock.toPosixMillis clock
+
+        getTime =
+            .starttime >> Time.posixToMillis
+    in
+    events
+        |> List.filter (.status >> (==) Event.Going)
+        |> List.partition (\e -> getTime e > currentTime)
+        |> Tuple.first
+        |> List.sortBy getTime
+        |> List.head
+
+
+orElse : Maybe a -> Maybe a -> Maybe a
+orElse x y =
+    case y of
+        Nothing ->
+            x
+
+        Just _ ->
+            y

@@ -50,9 +50,58 @@ type Msg
 -- VIEW
 
 
-viewSkeleton : Context.Schedule -> (msg -> Msg) -> Html msg -> Document Msg
-viewSkeleton schedule map html =
+marquee : Html msg -> Html msg
+marquee content =
     let
+        marqueeContent =
+            Html.div
+                [ class "marquee-content"
+                ]
+                [ content
+                ]
+    in
+    Html.div
+        [ class "marquee"
+        ]
+        [ marqueeContent
+        , marqueeContent
+        ]
+
+
+viewUpNext : Maybe Event -> Html msg
+viewUpNext maybeEvent =
+    case maybeEvent of
+        Nothing ->
+            Html.div [] []
+
+        Just event ->
+            Html.article
+                [ class "up-next-event" ]
+                [ Html.div
+                    [ class "up-next-eyebrow" ]
+                    [ Html.text "Up Next" ]
+                , marquee <|
+                    Html.h3
+                        [ class "up-next-name" ]
+                        [ Html.text event.name ]
+                , Html.span
+                    [ class "up-next-time" ]
+                    [ Html.text <| Clock.toString (Clock.inNL event.starttime) ]
+                , Html.span
+                    []
+                    [ Html.text " @ " ]
+                , Html.span
+                    [ class "up-next-venue" ]
+                    [ Html.text event.venue ]
+                ]
+
+
+viewSkeleton : Context -> (msg -> Msg) -> Html msg -> Document Msg
+viewSkeleton ctx map html =
+    let
+        schedule =
+            ctx.schedule
+
         title =
             Context.scheduleToString schedule
     in
@@ -62,7 +111,8 @@ viewSkeleton schedule map html =
             []
             [ Html.section
                 [ class "up-next" ]
-                []
+                [ viewUpNext <| Context.upNext ctx
+                ]
             , Html.section
                 [ class "select-view" ]
                 []
@@ -126,7 +176,7 @@ view : Model -> Document Msg
 view model =
     case model of
         Lineup m ->
-            viewSkeleton m.ctx.schedule LineupMsg <| Lineup.view m
+            viewSkeleton m.ctx LineupMsg <| Lineup.view m
 
         Error _ _ err ->
             { title = "error"

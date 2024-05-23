@@ -8254,6 +8254,83 @@ var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
 var $elm$html$Html$nav = _VirtualDom_node('nav');
 var $elm$html$Html$section = _VirtualDom_node('section');
+var $author$project$Context$orElse = F2(
+	function (x, y) {
+		if (y.$ === 'Nothing') {
+			return x;
+		} else {
+			return y;
+		}
+	});
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $elm$core$List$partition = F2(
+	function (pred, list) {
+		var step = F2(
+			function (x, _v0) {
+				var trues = _v0.a;
+				var falses = _v0.b;
+				return pred(x) ? _Utils_Tuple2(
+					A2($elm$core$List$cons, x, trues),
+					falses) : _Utils_Tuple2(
+					trues,
+					A2($elm$core$List$cons, x, falses));
+			});
+		return A3(
+			$elm$core$List$foldr,
+			step,
+			_Utils_Tuple2(_List_Nil, _List_Nil),
+			list);
+	});
+var $elm$core$List$sortBy = _List_sortBy;
+var $author$project$Context$upNextIn = F2(
+	function (events, clock) {
+		var getTime = A2(
+			$elm$core$Basics$composeR,
+			function ($) {
+				return $.starttime;
+			},
+			$elm$time$Time$posixToMillis);
+		var currentTime = $author$project$Clock$toPosixMillis(clock);
+		return $elm$core$List$head(
+			A2(
+				$elm$core$List$sortBy,
+				getTime,
+				A2(
+					$elm$core$List$partition,
+					function (e) {
+						return _Utils_cmp(
+							getTime(e),
+							currentTime) > 0;
+					},
+					A2(
+						$elm$core$List$filter,
+						A2(
+							$elm$core$Basics$composeR,
+							function ($) {
+								return $.status;
+							},
+							$elm$core$Basics$eq($author$project$Event$Going)),
+						events)).a));
+	});
+var $author$project$Context$upNext = function (_v0) {
+	var events = _v0.events;
+	var clock = _v0.clock;
+	return A2(
+		$author$project$Context$orElse,
+		A2($author$project$Context$upNextIn, events.popup, clock),
+		A2(
+			$author$project$Context$orElse,
+			A2($author$project$Context$upNextIn, events.saturday, clock),
+			A2($author$project$Context$upNextIn, events.friday, clock)));
+};
 var $author$project$Main$DayToggled = function (a) {
 	return {$: 'DayToggled', a: a};
 };
@@ -8315,8 +8392,94 @@ var $author$project$Main$viewSaturdayToggle = function (schedule) {
 					]))
 			]));
 };
+var $elm$html$Html$h3 = _VirtualDom_node('h3');
+var $author$project$Main$marquee = function (content) {
+	var marqueeContent = A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('marquee-content')
+			]),
+		_List_fromArray(
+			[content]));
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('marquee')
+			]),
+		_List_fromArray(
+			[marqueeContent, marqueeContent]));
+};
+var $author$project$Main$viewUpNext = function (maybeEvent) {
+	if (maybeEvent.$ === 'Nothing') {
+		return A2($elm$html$Html$div, _List_Nil, _List_Nil);
+	} else {
+		var event = maybeEvent.a;
+		return A2(
+			$elm$html$Html$article,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('up-next-event')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('up-next-eyebrow')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Up Next')
+						])),
+					$author$project$Main$marquee(
+					A2(
+						$elm$html$Html$h3,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('up-next-name')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(event.name)
+							]))),
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('up-next-time')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							$author$project$Clock$toString(
+								$author$project$Clock$inNL(event.starttime)))
+						])),
+					A2(
+					$elm$html$Html$span,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text(' @ ')
+						])),
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('up-next-venue')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(event.venue)
+						]))
+				]));
+	}
+};
 var $author$project$Main$viewSkeleton = F3(
-	function (schedule, map, html) {
+	function (ctx, map, html) {
+		var schedule = ctx.schedule;
 		var title = $author$project$Context$scheduleToString(schedule);
 		return {
 			body: _List_fromArray(
@@ -8332,7 +8495,11 @@ var $author$project$Main$viewSkeleton = F3(
 								[
 									$elm$html$Html$Attributes$class('up-next')
 								]),
-							_List_Nil),
+							_List_fromArray(
+								[
+									$author$project$Main$viewUpNext(
+									$author$project$Context$upNext(ctx))
+								])),
 							A2(
 							$elm$html$Html$section,
 							_List_fromArray(
@@ -8413,7 +8580,7 @@ var $author$project$Main$view = function (model) {
 		var m = model.a;
 		return A3(
 			$author$project$Main$viewSkeleton,
-			m.ctx.schedule,
+			m.ctx,
 			$author$project$Main$LineupMsg,
 			$author$project$Lineup$view(m));
 	} else {
