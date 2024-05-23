@@ -125,8 +125,32 @@ setTime ({ clock } as ctx) newTime =
 
 
 scheduleToPath : Schedule -> String
-scheduleToPath =
-    scheduleToString >> String.toLower >> (++) "/2024/"
+scheduleToPath schedule =
+    schedule
+        |> scheduleToString
+        |> String.toLower
+        |> (++) "#"
+
+
+startSaturday : Time.Posix
+startSaturday =
+    Time.millisToPosix 1716593400000
+
+
+todaysSchedule : Clock -> Schedule
+todaysSchedule clock =
+    let
+        millisNow =
+            Clock.toPosixMillis clock
+
+        millisSaturday =
+            Time.posixToMillis startSaturday
+    in
+    if millisNow < millisSaturday then
+        Friday
+
+    else
+        Saturday
 
 
 encodeEvents : Context -> Enc.Value

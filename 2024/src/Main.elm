@@ -127,13 +127,13 @@ viewSkeleton ctx map html =
             , Html.nav
                 [ class "nav" ]
                 [ Html.a
-                    [ href "friday"
+                    [ href "#friday"
                     , classList [ ( "you-are-here", schedule == Friday ) ]
                     ]
                     [ Html.text "Friday"
                     ]
                 , Html.a
-                    [ href "saturday"
+                    [ href "#saturday"
                     , classList [ ( "you-are-here", schedule /= Friday ) ]
                     ]
                     [ Html.text "Saturday" ]
@@ -211,17 +211,21 @@ update msg model =
         ( DayToggled schedule, Lineup { ctx } ) ->
             ( Lineup <| Lineup.new <| Context.setSchedule ctx schedule, Nav.pushUrl ctx.key <| Context.scheduleToPath schedule )
 
-        ( ChangedUrl ({ path, query } as url), Lineup { ctx } ) ->
+        ( ChangedUrl ({ path, fragment } as url), Lineup { ctx } ) ->
             let
                 schedule =
-                    if String.endsWith "/saturday" path then
-                        Saturday
+                    case fragment of
+                        Just "saturday" ->
+                            Saturday
 
-                    else if String.endsWith "/popup" path then
-                        Popup
+                        Just "popup" ->
+                            Popup
 
-                    else
-                        Friday
+                        Just "friday" ->
+                            Friday
+
+                        _ ->
+                            Context.todaysSchedule ctx.clock
 
                 newCtx =
                     Context.setSchedule { ctx | url = url } schedule
@@ -284,10 +288,16 @@ init flagsJson url key =
 
         Ok { time, friday, saturday, popup } ->
             let
+                clock =
+                    Clock.inNL <| Time.millisToPosix time
+
+                schedule =
+                    Context.todaysSchedule clock
+
                 ctx =
-                    Context key url (Clock.inNL <| Time.millisToPosix time) (Events friday saturday popup) Friday
+                    Context key url clock (Events friday saturday popup) schedule
             in
-            ( Lineup <| Lineup.new ctx, Cmd.none )
+            ( Lineup <| Lineup.new ctx, Nav.replaceUrl key (Context.scheduleToPath schedule) )
 
 
 main : Program Dec.Value Model Msg

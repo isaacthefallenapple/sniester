@@ -4,7 +4,7 @@ import Clock exposing (Clock)
 import Context exposing (Context, getScheduled)
 import Event exposing (Event)
 import Html exposing (Attribute, Html)
-import Html.Attributes exposing (attribute, checked, class, classList, name, title, type_)
+import Html.Attributes exposing (attribute, class, classList, id, name, title)
 import Html.Events exposing (onClick)
 import List
 import Ports
@@ -116,6 +116,7 @@ viewEvent selected startTime currentTime row { name, id, status, starttime, endt
     Html.article
         [ class "event"
         , classList [ ( "selected", selected ), ( "past", isPast ) ]
+        , Html.Attributes.id "currently-selected-event"
         , class <| String.toLower <| Event.statusToString <| status
         , style
             [ ( "grid-row", String.fromInt (row + 1) )

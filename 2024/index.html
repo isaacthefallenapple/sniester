@@ -671,6 +671,11 @@
             const store = tx.objectStore(STORE_NAME);
             store.put(data, EVENTS_KEY);
           });
+          app.ports.scrollIntoView.subscribe((id) => {
+            document
+              .getElementById("currently-selected-event")
+              .scrollIntoView();
+          });
         };
       };
       request.onupgradeneeded = (e) => {
