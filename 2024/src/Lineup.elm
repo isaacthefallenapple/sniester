@@ -234,6 +234,27 @@ isSelected id e =
 
 viewEvents : Maybe Event.Id -> List { venue : String, events : List Event } -> Clock -> Clock -> Int -> Int -> Maybe Float -> Html Msg
 viewEvents selectedId events startTime currentTime rows columns timeIndicator =
+    let
+        eventsHtml =
+            events
+                |> List.map .events
+                |> List.indexedMap (\i -> List.map (\e -> viewEvent (isSelected selectedId e) startTime currentTime i e))
+                |> List.concat
+
+        gridLines =
+            List.range 1 columns
+                |> List.map
+                    (\col ->
+                        Html.span
+                            [ class "grid-line"
+                            , style
+                                [ ( "grid-column", String.fromInt col )
+                                , ( "grid-row", "1 / " ++ String.fromInt (rows + 1) )
+                                ]
+                            ]
+                            []
+                    )
+    in
     Html.div
         [ class "events"
         , classList
@@ -254,11 +275,8 @@ viewEvents selectedId events startTime currentTime rows columns timeIndicator =
                    )
         ]
     <|
-        (events
-            |> List.map .events
-            |> List.indexedMap (\i -> List.map (\e -> viewEvent (isSelected selectedId e) startTime currentTime i e))
-            |> List.concat
-        )
+        eventsHtml
+            ++ gridLines
 
 
 findStartAndEnd : List Event -> ( Time.Posix, Time.Posix )

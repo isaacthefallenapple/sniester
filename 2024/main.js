@@ -7720,8 +7720,8 @@ var $author$project$Lineup$findStartAndEnd = function (events) {
 			return _Debug_todo(
 				'Lineup',
 				{
-					start: {line: 277, column: 29},
-					end: {line: 277, column: 39}
+					start: {line: 295, column: 29},
+					end: {line: 295, column: 39}
 				})('Maybe was Nothing');
 		});
 	return _Utils_Tuple2(
@@ -7867,6 +7867,7 @@ var $author$project$Lineup$isSelected = F2(
 				$elm$core$Basics$eq(e.id),
 				id));
 	});
+var $elm$html$Html$span = _VirtualDom_node('span');
 var $elm$virtual_dom$VirtualDom$attribute = F2(
 	function (key, value) {
 		return A2(
@@ -7920,7 +7921,6 @@ var $author$project$Lineup$longestWordLength = function (str) {
 				$elm$core$String$length,
 				A2($elm$core$String$split, ' ', str))));
 };
-var $elm$html$Html$span = _VirtualDom_node('span');
 var $author$project$Lineup$wordCount = A2(
 	$elm$core$Basics$composeR,
 	$elm$core$String$split(' '),
@@ -8004,6 +8004,49 @@ var $author$project$Lineup$viewEvent = F5(
 	});
 var $author$project$Lineup$viewEvents = F7(
 	function (selectedId, events, startTime, currentTime, rows, columns, timeIndicator) {
+		var gridLines = A2(
+			$elm$core$List$map,
+			function (col) {
+				return A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('grid-line'),
+							$author$project$Lineup$style(
+							_List_fromArray(
+								[
+									_Utils_Tuple2(
+									'grid-column',
+									$elm$core$String$fromInt(col)),
+									_Utils_Tuple2(
+									'grid-row',
+									'1 / ' + $elm$core$String$fromInt(rows + 1))
+								]))
+						]),
+					_List_Nil);
+			},
+			A2($elm$core$List$range, 1, columns));
+		var eventsHtml = $elm$core$List$concat(
+			A2(
+				$elm$core$List$indexedMap,
+				function (i) {
+					return $elm$core$List$map(
+						function (e) {
+							return A5(
+								$author$project$Lineup$viewEvent,
+								A2($author$project$Lineup$isSelected, selectedId, e),
+								startTime,
+								currentTime,
+								i,
+								e);
+						});
+				},
+				A2(
+					$elm$core$List$map,
+					function ($) {
+						return $.events;
+					},
+					events)));
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -8050,27 +8093,7 @@ var $author$project$Lineup$viewEvents = F7(
 									},
 									timeIndicator)))))
 				]),
-			$elm$core$List$concat(
-				A2(
-					$elm$core$List$indexedMap,
-					function (i) {
-						return $elm$core$List$map(
-							function (e) {
-								return A5(
-									$author$project$Lineup$viewEvent,
-									A2($author$project$Lineup$isSelected, selectedId, e),
-									startTime,
-									currentTime,
-									i,
-									e);
-							});
-					},
-					A2(
-						$elm$core$List$map,
-						function ($) {
-							return $.events;
-						},
-						events))));
+			_Utils_ap(eventsHtml, gridLines));
 	});
 var $elm$html$Html$header = _VirtualDom_node('header');
 var $author$project$Lineup$viewTimeline = F2(

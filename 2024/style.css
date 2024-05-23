@@ -63,7 +63,7 @@ main {
   display: grid;
 
   padding-inline: 0.5em;
-  padding-block: 1em 2em;
+  padding-block: 1em;
 
   grid-template-areas:
     "next"
@@ -178,19 +178,19 @@ main {
   --grid-color-v: var(--clr-yellow);
 
   background-image: linear-gradient(
-      var(--grid-color-v) var(--grid-width-v),
-      transparent var(--grid-width-v),
-      transparent calc(100% - var(--grid-width-v)),
-      var(--grid-color-v) calc(100% - var(--grid-width-v))
-    ),
-    linear-gradient(
-      90deg,
-      var(--grid-color-h) var(--grid-width-h),
-      transparent var(--grid-width-h),
-      transparent calc(100% - var(--grid-width-h)),
-      var(--grid-color-h) calc(100% - var(--grid-width-h))
-    );
-  background-size: calc(100% / var(--columns)) calc(100% / var(--rows));
+    var(--grid-color-v) var(--grid-width-v),
+    transparent var(--grid-width-v),
+    transparent calc(100% - var(--grid-width-v)),
+    var(--grid-color-v) calc(100% - var(--grid-width-v))
+  );
+  /* linear-gradient( */
+  /*   90deg, */
+  /*   var(--grid-color-h) var(--grid-width-h), */
+  /*   transparent var(--grid-width-h), */
+  /*   transparent calc(100% - var(--grid-width-h)), */
+  /*   var(--grid-color-h) calc(100% - var(--grid-width-h)) */
+  /* ); */
+  background-size: 100% calc(100% / var(--rows));
   background-position: 0 calc(var(--row-size) / 2);
 }
 
@@ -201,7 +201,7 @@ main {
   align-items: center;
   justify-content: center;
   text-align: center;
-  margin: 0.1rem;
+  margin-block: 0.1rem;
 
   position: relative;
 
@@ -254,6 +254,10 @@ main {
       var(--clr-yellow) 1.5rem
     );
   }
+}
+
+.events .grid-line {
+  border-inline: 1px solid var(--clr-purple);
 }
 
 .events.time-indicator::after {
