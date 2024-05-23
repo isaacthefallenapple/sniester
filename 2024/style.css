@@ -183,13 +183,6 @@ main {
     transparent calc(100% - var(--grid-width-v)),
     var(--grid-color-v) calc(100% - var(--grid-width-v))
   );
-  /* linear-gradient( */
-  /*   90deg, */
-  /*   var(--grid-color-h) var(--grid-width-h), */
-  /*   transparent var(--grid-width-h), */
-  /*   transparent calc(100% - var(--grid-width-h)), */
-  /*   var(--grid-color-h) calc(100% - var(--grid-width-h)) */
-  /* ); */
   background-size: 100% calc(100% / var(--rows));
   background-position: 0 calc(var(--row-size) / 2);
 }
@@ -388,7 +381,8 @@ main {
   padding-block: 0.2em;
 
   max-height: 100%;
-  max-width: max-content;
+
+  width: clamp(16ch, 100%, 32ch);
   margin-inline: auto;
 
   overflow-y: auto;
