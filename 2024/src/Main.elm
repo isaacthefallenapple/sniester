@@ -27,9 +27,8 @@ import Url exposing (Url)
 
 
 type Model
-    = Initial Url Nav.Key
-    | Lineup Lineup.Model
-    | Error String
+    = Lineup Lineup.Model
+    | Error Nav.Key Url String
 
 
 
@@ -41,7 +40,6 @@ type Msg
     | ClickedLink Browser.UrlRequest
     | GotTime Time.Posix
     | GotInitialTime Time.Zone Time.Posix
-    | GotData (Result Http.Error (List Event))
     | UpdateEvent Event.Id Event.Status
     | LineupMsg Lineup.Msg
     | DayToggled Context.Schedule
@@ -126,15 +124,10 @@ viewSaturdayToggle schedule =
 view : Model -> Document Msg
 view model =
     case model of
-        Initial url _ ->
-            { title = "Sniester 2024"
-            , body = [ Html.p [] [ Html.text <| Url.toString url ] ]
-            }
-
         Lineup m ->
             viewSkeleton m.ctx.schedule LineupMsg <| Lineup.view m
 
-        Error err ->
+        Error _ _ err ->
             { title = "error"
             , body = [ Html.text err ]
             }
@@ -154,11 +147,8 @@ update msg model =
                         Lineup m ->
                             m.ctx.key
 
-                        Initial _ k ->
+                        Error k _ _ ->
                             k
-
-                        _ ->
-                            Debug.todo "panic"
             in
             case urlRequest of
                 Browser.Internal url ->
@@ -187,16 +177,6 @@ update msg model =
             in
             ( Lineup <| Lineup.new newCtx, Cmd.none )
 
-        -- ( GotData (Ok events), Initial url key ) ->
-        --     let
-        --         ctx =
-        --             Context key url (Clock Time.utc (Time.millisToPosix 0)) (Events events events events) Context.Friday
-        --     in
-        --     ( Lineup <| Lineup.new ctx, Cmd.none )
-        --
-        ( GotData (Err err), _ ) ->
-            ( Error <| Debug.toString err, Cmd.none )
-
         ( LineupMsg m, Lineup mdl ) ->
             let
                 ( newModel, cmds ) =
@@ -204,8 +184,6 @@ update msg model =
             in
             ( Lineup newModel, Cmd.map LineupMsg cmds )
 
-        -- ( GotInitialTime zone now, Initial url key ) ->
-        --     ( Model { ctx = { key = key, url = url, timezone = zone, time = now }, friday = [], saturday = [], popup = [] }, Cmd.none )
         _ ->
             ( model, Cmd.none )
 
@@ -223,19 +201,6 @@ subscriptions _ =
 -- INIT
 
 
-getInitialTime : Task x ( Time.Zone, Time.Posix )
-getInitialTime =
-    Task.map2 Tuple.pair Time.here Time.now
-
-
-getInitialData : Cmd Msg
-getInitialData =
-    Http.get
-        { url = "data/data-saturday.json"
-        , expect = Http.expectJson GotData (Dec.list Event.decoder)
-        }
-
-
 init : Dec.Value -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init flagsJson url key =
     let
@@ -244,7 +209,7 @@ init flagsJson url key =
     in
     case flags of
         Err err ->
-            ( Error <| Debug.toString err, Cmd.none )
+            ( Error key url <| Debug.toString err, Cmd.none )
 
         Ok { time, friday, saturday, popup } ->
             let
@@ -252,10 +217,6 @@ init flagsJson url key =
                     Context key url (Clock.inNL <| Time.millisToPosix time) (Events friday saturday popup) Friday
             in
             ( Lineup <| Lineup.new ctx, Cmd.none )
-
-
-
--- ( Initial url key, Task.perform (\( zone, now ) -> GotInitialTime zone now) getInitialTime )
 
 
 main : Program Dec.Value Model Msg

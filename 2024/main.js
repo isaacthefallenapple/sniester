@@ -5336,9 +5336,10 @@ var $author$project$Context$Context = F5(
 	function (key, url, clock, events, schedule) {
 		return {clock: clock, events: events, key: key, schedule: schedule, url: url};
 	});
-var $author$project$Main$Error = function (a) {
-	return {$: 'Error', a: a};
-};
+var $author$project$Main$Error = F3(
+	function (a, b, c) {
+		return {$: 'Error', a: a, b: b, c: c};
+	});
 var $author$project$Context$Events = F3(
 	function (friday, saturday, popup) {
 		return {friday: friday, popup: popup, saturday: saturday};
@@ -6382,7 +6383,10 @@ var $author$project$Main$init = F3(
 		if (flags.$ === 'Err') {
 			var err = flags.a;
 			return _Utils_Tuple2(
-				$author$project$Main$Error(
+				A3(
+					$author$project$Main$Error,
+					key,
+					url,
 					$elm$core$Debug$toString(err)),
 				$elm$core$Platform$Cmd$none);
 		} else {
@@ -6491,7 +6495,6 @@ var $elm$url$Url$toString = function (url) {
 					_Utils_ap(http, url.host)),
 				url.path)));
 };
-var $elm$core$Debug$todo = _Debug_todo;
 var $author$project$Event$statusToString = function (status) {
 	switch (status.$) {
 		case 'Going':
@@ -6902,26 +6905,18 @@ var $author$project$Lineup$update = F2(
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		var _v0 = _Utils_Tuple2(msg, model);
-		_v0$5:
+		_v0$4:
 		while (true) {
 			switch (_v0.a.$) {
 				case 'ClickedLink':
 					var urlRequest = _v0.a.a;
 					var key = function () {
-						switch (model.$) {
-							case 'Lineup':
-								var m = model.a;
-								return m.ctx.key;
-							case 'Initial':
-								var k = model.b;
-								return k;
-							default:
-								return _Debug_todo(
-									'Main',
-									{
-										start: {line: 161, column: 29},
-										end: {line: 161, column: 39}
-									})('panic');
+						if (model.$ === 'Lineup') {
+							var m = model.a;
+							return m.ctx.key;
+						} else {
+							var k = model.a;
+							return k;
 						}
 					}();
 					if (urlRequest.$ === 'Internal') {
@@ -6951,7 +6946,7 @@ var $author$project$Main$update = F2(
 								ctx.key,
 								$author$project$Context$scheduleToPath(schedule)));
 					} else {
-						break _v0$5;
+						break _v0$4;
 					}
 				case 'ChangedUrl':
 					if (_v0.b.$ === 'Lineup') {
@@ -6971,17 +6966,7 @@ var $author$project$Main$update = F2(
 								$author$project$Lineup$new(newCtx)),
 							$elm$core$Platform$Cmd$none);
 					} else {
-						break _v0$5;
-					}
-				case 'GotData':
-					if (_v0.a.a.$ === 'Err') {
-						var err = _v0.a.a.a;
-						return _Utils_Tuple2(
-							$author$project$Main$Error(
-								$elm$core$Debug$toString(err)),
-							$elm$core$Platform$Cmd$none);
-					} else {
-						break _v0$5;
+						break _v0$4;
 					}
 				case 'LineupMsg':
 					if (_v0.b.$ === 'Lineup') {
@@ -6994,15 +6979,14 @@ var $author$project$Main$update = F2(
 							$author$project$Main$Lineup(newModel),
 							A2($elm$core$Platform$Cmd$map, $author$project$Main$LineupMsg, cmds));
 					} else {
-						break _v0$5;
+						break _v0$4;
 					}
 				default:
-					break _v0$5;
+					break _v0$4;
 			}
 		}
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 	});
-var $elm$html$Html$p = _VirtualDom_node('p');
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$Clock$mapMillis = F2(
@@ -7155,6 +7139,7 @@ var $elm$core$List$minimum = function (list) {
 		return $elm$core$Maybe$Nothing;
 	}
 };
+var $elm$core$Debug$todo = _Debug_todo;
 var $author$project$Lineup$findStartAndEnd = function (events) {
 	var unwrap = F2(
 		function (f, m) {
@@ -7894,39 +7879,22 @@ var $author$project$Main$viewSkeleton = F3(
 		};
 	});
 var $author$project$Main$view = function (model) {
-	switch (model.$) {
-		case 'Initial':
-			var url = model.a;
-			return {
-				body: _List_fromArray(
-					[
-						A2(
-						$elm$html$Html$p,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								$elm$url$Url$toString(url))
-							]))
-					]),
-				title: 'Sniester 2024'
-			};
-		case 'Lineup':
-			var m = model.a;
-			return A3(
-				$author$project$Main$viewSkeleton,
-				m.ctx.schedule,
-				$author$project$Main$LineupMsg,
-				$author$project$Lineup$view(m));
-		default:
-			var err = model.a;
-			return {
-				body: _List_fromArray(
-					[
-						$elm$html$Html$text(err)
-					]),
-				title: 'error'
-			};
+	if (model.$ === 'Lineup') {
+		var m = model.a;
+		return A3(
+			$author$project$Main$viewSkeleton,
+			m.ctx.schedule,
+			$author$project$Main$LineupMsg,
+			$author$project$Lineup$view(m));
+	} else {
+		var err = model.c;
+		return {
+			body: _List_fromArray(
+				[
+					$elm$html$Html$text(err)
+				]),
+			title: 'error'
+		};
 	}
 };
 var $author$project$Main$main = $elm$browser$Browser$application(
