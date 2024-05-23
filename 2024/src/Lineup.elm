@@ -88,15 +88,15 @@ view { ctx, selected } =
             [ Html.div [ class "blackout-box" ] []
             , viewTimeline startTime quarterHours
             , viewVenues <| List.map .venue byVenue
-            , viewEvents selected byVenue startTime (List.length byVenue) (quarterHours + 1) indicator
+            , viewEvents selected byVenue startTime currentTime (List.length byVenue) (quarterHours + 1) indicator
             ]
          )
             :: Maybe.withDefault [] (Maybe.map (viewUpdater >> List.singleton) (Maybe.andThen (Context.getEvent ctx) selected))
         )
 
 
-viewEvent : Bool -> Clock -> Int -> Event -> Html Msg
-viewEvent selected startTime row { name, id, status, starttime, endtime } =
+viewEvent : Bool -> Clock -> Clock -> Int -> Event -> Html Msg
+viewEvent selected startTime currentTime row { name, id, status, starttime, endtime } =
     let
         eventStart =
             Clock.withTime startTime starttime
@@ -109,10 +109,13 @@ viewEvent selected startTime row { name, id, status, starttime, endtime } =
 
         length =
             totalQuarterHours eventStart eventEnd
+
+        isPast =
+            Clock.toPosixMillis eventEnd <= Clock.toPosixMillis currentTime
     in
     Html.article
         [ class "event"
-        , classList [ ( "selected", selected ) ]
+        , classList [ ( "selected", selected ), ( "past", isPast ) ]
         , class <| String.toLower <| Event.statusToString <| status
         , style
             [ ( "grid-row", String.fromInt (row + 1) )
@@ -228,8 +231,8 @@ isSelected id e =
         |> Maybe.withDefault False
 
 
-viewEvents : Maybe Event.Id -> List { venue : String, events : List Event } -> Clock -> Int -> Int -> Maybe Float -> Html Msg
-viewEvents selectedId events startTime rows columns timeIndicator =
+viewEvents : Maybe Event.Id -> List { venue : String, events : List Event } -> Clock -> Clock -> Int -> Int -> Maybe Float -> Html Msg
+viewEvents selectedId events startTime currentTime rows columns timeIndicator =
     Html.div
         [ class "events"
         , classList
@@ -252,7 +255,7 @@ viewEvents selectedId events startTime rows columns timeIndicator =
     <|
         (events
             |> List.map .events
-            |> List.indexedMap (\i -> List.map (\e -> viewEvent (isSelected selectedId e) startTime i e))
+            |> List.indexedMap (\i -> List.map (\e -> viewEvent (isSelected selectedId e) startTime currentTime i e))
             |> List.concat
         )
 

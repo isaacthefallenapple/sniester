@@ -205,6 +205,10 @@ main {
 
   position: relative;
 
+  &.past {
+    opacity: 80%;
+  }
+
   .small {
     font-size: 0.5em;
   }
@@ -238,7 +242,6 @@ main {
   }
 
   &.undecided {
-    background-color: var(--clr-undecided);
   }
 
   &.skip {

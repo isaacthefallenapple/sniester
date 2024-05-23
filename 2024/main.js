@@ -6864,7 +6864,7 @@ var $elm$time$Time$every = F2(
 			A2($elm$time$Time$Every, interval, tagger));
 	});
 var $author$project$Main$subscriptions = function (_v0) {
-	return A2($elm$time$Time$every, 60 * 1000, $author$project$Main$CurrentTime);
+	return A2($elm$time$Time$every, 2 * 1000, $author$project$Main$CurrentTime);
 };
 var $author$project$Lineup$CurrentTime = function (a) {
 	return {$: 'CurrentTime', a: a};
@@ -7693,8 +7693,8 @@ var $author$project$Lineup$findStartAndEnd = function (events) {
 			return _Debug_todo(
 				'Lineup',
 				{
-					start: {line: 273, column: 29},
-					end: {line: 273, column: 39}
+					start: {line: 276, column: 29},
+					end: {line: 276, column: 39}
 				})('Maybe was Nothing');
 		});
 	return _Utils_Tuple2(
@@ -7923,8 +7923,8 @@ var $author$project$Lineup$renderName = F2(
 				]));
 	});
 var $elm$html$Html$Attributes$title = $elm$html$Html$Attributes$stringProperty('title');
-var $author$project$Lineup$viewEvent = F4(
-	function (selected, startTime, row, _v0) {
+var $author$project$Lineup$viewEvent = F5(
+	function (selected, startTime, currentTime, row, _v0) {
 		var name = _v0.name;
 		var id = _v0.id;
 		var status = _v0.status;
@@ -7933,6 +7933,9 @@ var $author$project$Lineup$viewEvent = F4(
 		var eventStart = A2($author$project$Clock$withTime, startTime, starttime);
 		var quarterHours = A2($author$project$Lineup$totalQuarterHours, startTime, eventStart);
 		var eventEnd = A2($author$project$Clock$withTime, startTime, endtime);
+		var isPast = _Utils_cmp(
+			$author$project$Clock$toPosixMillis(eventEnd),
+			$author$project$Clock$toPosixMillis(currentTime)) < 1;
 		var length = A2($author$project$Lineup$totalQuarterHours, eventStart, eventEnd);
 		return A2(
 			$elm$html$Html$article,
@@ -7942,7 +7945,8 @@ var $author$project$Lineup$viewEvent = F4(
 					$elm$html$Html$Attributes$classList(
 					_List_fromArray(
 						[
-							_Utils_Tuple2('selected', selected)
+							_Utils_Tuple2('selected', selected),
+							_Utils_Tuple2('past', isPast)
 						])),
 					$elm$html$Html$Attributes$class(
 					$elm$core$String$toLower(
@@ -7969,8 +7973,8 @@ var $author$project$Lineup$viewEvent = F4(
 					A2($author$project$Lineup$renderName, name, length)
 				]));
 	});
-var $author$project$Lineup$viewEvents = F6(
-	function (selectedId, events, startTime, rows, columns, timeIndicator) {
+var $author$project$Lineup$viewEvents = F7(
+	function (selectedId, events, startTime, currentTime, rows, columns, timeIndicator) {
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -8023,10 +8027,11 @@ var $author$project$Lineup$viewEvents = F6(
 					function (i) {
 						return $elm$core$List$map(
 							function (e) {
-								return A4(
+								return A5(
 									$author$project$Lineup$viewEvent,
 									A2($author$project$Lineup$isSelected, selectedId, e),
 									startTime,
+									currentTime,
 									i,
 									e);
 							});
@@ -8222,11 +8227,12 @@ var $author$project$Lineup$view = function (_v0) {
 								return $.venue;
 							},
 							byVenue)),
-						A6(
+						A7(
 						$author$project$Lineup$viewEvents,
 						selected,
 						byVenue,
 						startTime,
+						currentTime,
 						$elm$core$List$length(byVenue),
 						quarterHours + 1,
 						indicator)
