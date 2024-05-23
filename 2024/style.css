@@ -27,6 +27,10 @@ select {
   font: inherit;
 }
 
+html {
+  scrollbar-color: var(--clr-purple) var(--clr-yellow);
+}
+
 body {
   font-family: "Passion One", sans-serif;
   font-weight: 400;
@@ -34,7 +38,6 @@ body {
   font-size: 4rem;
   line-height: 1;
   background-color: var(--clr-black);
-  scrollbar-color: var(--clr-black) var(--clr-yellow);
   text-size-adjust: none;
 }
 
@@ -91,7 +94,7 @@ main {
   grid-template-rows: var(--first-row-size) 1fr;
   gap: var(--gutter) 0;
 
-  overflow: scroll;
+  overflow: auto;
 
   > .timestamps {
     grid-area: 1 / 2;
