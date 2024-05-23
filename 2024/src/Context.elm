@@ -3,6 +3,7 @@ module Context exposing (..)
 import Browser.Navigation as Nav
 import Clock exposing (Clock)
 import Event exposing (Event)
+import Json.Encode as Enc
 import Url exposing (Url)
 
 
@@ -119,3 +120,12 @@ scheduleToString schedule =
 scheduleToPath : Schedule -> String
 scheduleToPath =
     scheduleToString >> String.toLower >> (++) "/2024/"
+
+
+encodeEvents : Context -> Enc.Value
+encodeEvents ctx =
+    Enc.object
+        [ ( "friday", Enc.list Event.encode ctx.events.friday )
+        , ( "saturday", Enc.list Event.encode ctx.events.saturday )
+        , ( "popup", Enc.list Event.encode ctx.events.popup )
+        ]

@@ -7,6 +7,7 @@ import Html exposing (Attribute, Html)
 import Html.Attributes exposing (attribute, checked, class, classList, name, title, type_)
 import Html.Events exposing (onClick)
 import List
+import Ports
 import Time
 
 
@@ -32,14 +33,18 @@ type alias ToMsg msg =
     Event.Id -> Event.Status -> msg
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd msg )
 update msg ({ ctx } as model) =
     case msg of
         ClickedEvent event ->
-            { model | selected = Just event }
+            ( { model | selected = Just event }, Cmd.none )
 
         UpdateEvent id status ->
-            { model | ctx = Context.setStatus ctx id status }
+            let
+                newCtx =
+                    Context.setStatus ctx id status
+            in
+            ( { model | ctx = newCtx }, Ports.setStorage <| Context.encodeEvents newCtx )
 
 
 view : Model -> Html Msg

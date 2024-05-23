@@ -13,8 +13,10 @@ import Http
 import Iso8601
 import Json.Decode as Dec
 import Json.Decode.Pipeline as Pipeline
+import Json.Encode as Enc
 import Lineup
 import Platform exposing (Task)
+import Ports
 import Task
 import Time
 import Url exposing (Url)
@@ -196,7 +198,11 @@ update msg model =
             ( Error <| Debug.toString err, Cmd.none )
 
         ( LineupMsg m, Lineup mdl ) ->
-            ( Lineup <| Lineup.update m mdl, Cmd.none )
+            let
+                ( newModel, cmds ) =
+                    Lineup.update m mdl
+            in
+            ( Lineup newModel, Cmd.map LineupMsg cmds )
 
         -- ( GotInitialTime zone now, Initial url key ) ->
         --     ( Model { ctx = { key = key, url = url, timezone = zone, time = now }, friday = [], saturday = [], popup = [] }, Cmd.none )

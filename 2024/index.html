@@ -643,15 +643,52 @@
     </script>
 
     <script>
-      var app = Elm.Main.init({
-        node: document.getElementById("app"),
-        flags: {
-          time: Date.now(),
-          friday: friday,
-          saturday: saturday,
-          popup: popup,
-        },
-      });
+      const EVENTS_KEY = "events";
+      const STORE_NAME = "data";
+      var app;
+      let db;
+      const request = indexedDB.open("database");
+      request.onerror = console.error;
+      request.onsuccess = (e) => {
+        db = e.target.result;
+        db
+          .transaction("data")
+          .objectStore(STORE_NAME)
+          .get(EVENTS_KEY).onsuccess = (e) => {
+          app = Elm.Main.init({
+            node: document.getElementById("app"),
+            flags: {
+              time: Date.now(),
+              ...e.target.result,
+            },
+          });
+          app.ports.setStorage.subscribe((data) => {
+            const tx = db.transaction("data", "readwrite");
+            tx.onsuccess = (e) => console.info("saved");
+            tx.onerror = (e) =>
+              console.error(`transaction failed: ${e.target.error}`);
+
+            const store = tx.objectStore(STORE_NAME);
+            store.put(data, EVENTS_KEY);
+          });
+        };
+      };
+      request.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        const objectStore = db.createObjectStore("data");
+
+        objectStore.transaction.oncomplete = (e) => {
+          const dataStore = db
+            .transaction("data", "readwrite")
+            .objectStore("data");
+          const events = {
+            friday: friday,
+            saturday: saturday,
+            popup: popup,
+          };
+          dataStore.add(events, "events");
+        };
+      };
     </script>
   </body>
 </html>
