@@ -6857,8 +6857,8 @@ var $author$project$Lineup$findStartAndEnd = function (events) {
 			return _Debug_todo(
 				'Lineup',
 				{
-					start: {line: 256, column: 29},
-					end: {line: 256, column: 39}
+					start: {line: 264, column: 29},
+					end: {line: 264, column: 39}
 				})('Maybe was Nothing');
 		});
 	return _Utils_Tuple2(
@@ -6985,6 +6985,25 @@ var $elm$core$List$concat = function (lists) {
 	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
 };
 var $elm$core$String$fromFloat = _String_fromNumber;
+var $elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
+var $author$project$Lineup$isSelected = F2(
+	function (id, e) {
+		return A2(
+			$elm$core$Maybe$withDefault,
+			false,
+			A2(
+				$elm$core$Maybe$map,
+				$elm$core$Basics$eq(e.id),
+				id));
+	});
 var $elm$virtual_dom$VirtualDom$attribute = F2(
 	function (key, value) {
 		return A2(
@@ -7027,15 +7046,6 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
-var $elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
 var $author$project$Lineup$longestWordLength = function (str) {
 	return A2(
 		$elm$core$Maybe$withDefault,
@@ -7095,8 +7105,8 @@ var $author$project$Clock$withTime = F2(
 			clock,
 			{time: time});
 	});
-var $author$project$Lineup$viewEvent = F3(
-	function (startTime, row, _v0) {
+var $author$project$Lineup$viewEvent = F4(
+	function (selected, startTime, row, _v0) {
 		var name = _v0.name;
 		var id = _v0.id;
 		var status = _v0.status;
@@ -7111,6 +7121,11 @@ var $author$project$Lineup$viewEvent = F3(
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class('event'),
+					$elm$html$Html$Attributes$classList(
+					_List_fromArray(
+						[
+							_Utils_Tuple2('selected', selected)
+						])),
 					$elm$html$Html$Attributes$class(
 					$elm$core$String$toLower(
 						$author$project$Event$statusToString(status))),
@@ -7136,8 +7151,8 @@ var $author$project$Lineup$viewEvent = F3(
 					A2($author$project$Lineup$renderName, name, length)
 				]));
 	});
-var $author$project$Lineup$viewEvents = F5(
-	function (events, startTime, rows, columns, timeIndicator) {
+var $author$project$Lineup$viewEvents = F6(
+	function (selectedId, events, startTime, rows, columns, timeIndicator) {
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -7189,7 +7204,14 @@ var $author$project$Lineup$viewEvents = F5(
 					$elm$core$List$indexedMap,
 					function (i) {
 						return $elm$core$List$map(
-							A2($author$project$Lineup$viewEvent, startTime, i));
+							function (e) {
+								return A4(
+									$author$project$Lineup$viewEvent,
+									A2($author$project$Lineup$isSelected, selectedId, e),
+									startTime,
+									i,
+									e);
+							});
 					},
 					A2(
 						$elm$core$List$map,
@@ -7468,8 +7490,9 @@ var $author$project$Lineup$view = function (_v0) {
 								return $.venue;
 							},
 							byVenue)),
-						A5(
+						A6(
 						$author$project$Lineup$viewEvents,
+						selected,
 						byVenue,
 						startTime,
 						$elm$core$List$length(byVenue),

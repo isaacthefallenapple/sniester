@@ -79,15 +79,15 @@ view { ctx, selected } =
             [ Html.div [ class "blackout-box" ] []
             , viewTimeline startTime quarterHours
             , viewVenues <| List.map .venue byVenue
-            , viewEvents byVenue startTime (List.length byVenue) (quarterHours + 1) indicator
+            , viewEvents selected byVenue startTime (List.length byVenue) (quarterHours + 1) indicator
             ]
          )
             :: Maybe.withDefault [] (Maybe.map (viewUpdater >> List.singleton) (Maybe.andThen (Context.getEvent ctx) selected))
         )
 
 
-viewEvent : Clock -> Int -> Event -> Html Msg
-viewEvent startTime row { name, id, status, starttime, endtime } =
+viewEvent : Bool -> Clock -> Int -> Event -> Html Msg
+viewEvent selected startTime row { name, id, status, starttime, endtime } =
     let
         eventStart =
             Clock.withTime startTime starttime
@@ -103,6 +103,7 @@ viewEvent startTime row { name, id, status, starttime, endtime } =
     in
     Html.article
         [ class "event"
+        , classList [ ( "selected", selected ) ]
         , class <| String.toLower <| Event.statusToString <| status
         , style
             [ ( "grid-row", String.fromInt (row + 1) )
@@ -211,8 +212,15 @@ viewVenues venues =
         List.map (\s -> Html.div [] [ Html.text s ]) venues
 
 
-viewEvents : List { venue : String, events : List Event } -> Clock -> Int -> Int -> Maybe Float -> Html Msg
-viewEvents events startTime rows columns timeIndicator =
+isSelected : Maybe Event.Id -> Event -> Bool
+isSelected id e =
+    id
+        |> Maybe.map ((==) e.id)
+        |> Maybe.withDefault False
+
+
+viewEvents : Maybe Event.Id -> List { venue : String, events : List Event } -> Clock -> Int -> Int -> Maybe Float -> Html Msg
+viewEvents selectedId events startTime rows columns timeIndicator =
     Html.div
         [ class "events"
         , classList
@@ -235,7 +243,7 @@ viewEvents events startTime rows columns timeIndicator =
     <|
         (events
             |> List.map .events
-            |> List.indexedMap (\i -> List.map (viewEvent startTime i))
+            |> List.indexedMap (\i -> List.map (\e -> viewEvent (isSelected selectedId e) startTime i e))
             |> List.concat
         )
 

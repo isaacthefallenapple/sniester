@@ -199,6 +199,12 @@ main {
     rotate: -90deg;
   }
 
+  &.selected {
+    outline: var(--clr-purple) solid 3px;
+    outline-offset: 3px;
+    z-index: 11;
+  }
+
   &.going {
     color: var(--clr-white);
     background-color: var(--clr-going);
