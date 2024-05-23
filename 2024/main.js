@@ -6866,6 +6866,9 @@ var $elm$time$Time$every = F2(
 var $author$project$Main$subscriptions = function (_v0) {
 	return A2($elm$time$Time$every, 60 * 1000, $author$project$Main$CurrentTime);
 };
+var $author$project$Lineup$CurrentTime = function (a) {
+	return {$: 'CurrentTime', a: a};
+};
 var $author$project$Main$LineupMsg = function (a) {
 	return {$: 'LineupMsg', a: a};
 };
@@ -6931,21 +6934,6 @@ var $author$project$Context$setSchedule = F2(
 		return _Utils_update(
 			ctx,
 			{schedule: schedule});
-	});
-var $author$project$Clock$withTime = F2(
-	function (clock, time) {
-		return _Utils_update(
-			clock,
-			{time: time});
-	});
-var $author$project$Context$setTime = F2(
-	function (ctx, newTime) {
-		var clock = ctx.clock;
-		return _Utils_update(
-			ctx,
-			{
-				clock: A2($author$project$Clock$withTime, clock, newTime)
-			});
 	});
 var $elm$time$Time$flooredDiv = F2(
 	function (numerator, denominator) {
@@ -7368,28 +7356,53 @@ var $author$project$Context$setStatus = F3(
 			});
 	});
 var $author$project$Ports$setStorage = _Platform_outgoingPort('setStorage', $elm$core$Basics$identity);
+var $author$project$Clock$withTime = F2(
+	function (clock, time) {
+		return _Utils_update(
+			clock,
+			{time: time});
+	});
+var $author$project$Context$setTime = F2(
+	function (ctx, newTime) {
+		var clock = ctx.clock;
+		return _Utils_update(
+			ctx,
+			{
+				clock: A2($author$project$Clock$withTime, clock, newTime)
+			});
+	});
 var $author$project$Lineup$update = F2(
 	function (msg, model) {
 		var ctx = model.ctx;
-		if (msg.$ === 'ClickedEvent') {
-			var event = msg.a;
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{
-						selected: $elm$core$Maybe$Just(event)
-					}),
-				$elm$core$Platform$Cmd$none);
-		} else {
-			var id = msg.a;
-			var status = msg.b;
-			var newCtx = A3($author$project$Context$setStatus, ctx, id, status);
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{ctx: newCtx}),
-				$author$project$Ports$setStorage(
-					$author$project$Context$encodeEvents(newCtx)));
+		switch (msg.$) {
+			case 'ClickedEvent':
+				var event = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							selected: $elm$core$Maybe$Just(event)
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'UpdateEvent':
+				var id = msg.a;
+				var status = msg.b;
+				var newCtx = A3($author$project$Context$setStatus, ctx, id, status);
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{ctx: newCtx}),
+					$author$project$Ports$setStorage(
+						$author$project$Context$encodeEvents(newCtx)));
+			default:
+				var currentTime = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							ctx: A2($author$project$Context$setTime, ctx, currentTime)
+						}),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $elm$core$Result$withDefault = F2(
@@ -7483,7 +7496,7 @@ var $author$project$Main$update = F2(
 				case 'CurrentTime':
 					if (_v0.b.$ === 'Lineup') {
 						var currentTime = _v0.a.a;
-						var ctx = _v0.b.a.ctx;
+						var mdl = _v0.b.a;
 						var clock = $author$project$Clock$inNL(currentTime);
 						var minute = $author$project$Clock$toMinute(clock);
 						var fakeTime = A2(
@@ -7496,14 +7509,18 @@ var $author$project$Main$update = F2(
 									_Utils_chr('0'),
 									$elm$core$String$fromInt(minute)) + ':00+02:00')));
 						var _v4 = A2(
+							$author$project$Lineup$update,
+							$author$project$Lineup$CurrentTime(fakeTime),
+							mdl);
+						var newModel = _v4.a;
+						var cmds = _v4.b;
+						var _v5 = A2(
 							$elm$core$Debug$log,
 							'fakeTime',
 							$author$project$Clock$toString(clock));
 						return _Utils_Tuple2(
-							$author$project$Main$Lineup(
-								$author$project$Lineup$new(
-									A2($author$project$Context$setTime, ctx, fakeTime))),
-							$elm$core$Platform$Cmd$none);
+							$author$project$Main$Lineup(newModel),
+							A2($elm$core$Platform$Cmd$map, $author$project$Main$LineupMsg, cmds));
 					} else {
 						break _v0$5;
 					}
@@ -7676,8 +7693,8 @@ var $author$project$Lineup$findStartAndEnd = function (events) {
 			return _Debug_todo(
 				'Lineup',
 				{
-					start: {line: 269, column: 29},
-					end: {line: 269, column: 39}
+					start: {line: 273, column: 29},
+					end: {line: 273, column: 39}
 				})('Maybe was Nothing');
 		});
 	return _Utils_Tuple2(
@@ -8080,32 +8097,51 @@ var $author$project$Lineup$viewUpdater = function (ev) {
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('status-updater')
+				$elm$html$Html$Attributes$class('event-info')
 			]),
-		A2(
-			$elm$core$List$map,
-			function (s) {
-				return A2(
-					$elm$html$Html$button,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$classList(
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('event-name')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(ev.name)
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('status-updater')
+					]),
+				A2(
+					$elm$core$List$map,
+					function (s) {
+						return A2(
+							$elm$html$Html$button,
 							_List_fromArray(
 								[
-									_Utils_Tuple2(
-									'current-status',
-									_Utils_eq(s, ev.status))
-								])),
-							$elm$html$Html$Events$onClick(
-							A2($author$project$Lineup$UpdateEvent, ev.id, s))
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text(
-							$author$project$Event$statusToEmoji(s))
-						]));
-			},
-			data));
+									$elm$html$Html$Attributes$classList(
+									_List_fromArray(
+										[
+											_Utils_Tuple2(
+											'current-status',
+											_Utils_eq(s, ev.status))
+										])),
+									$elm$html$Html$Events$onClick(
+									A2($author$project$Lineup$UpdateEvent, ev.id, s))
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text(
+									$author$project$Event$statusToEmoji(s))
+								]));
+					},
+					data))
+			]));
 };
 var $author$project$Lineup$viewVenues = function (venues) {
 	return A2(

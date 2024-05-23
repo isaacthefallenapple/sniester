@@ -14,6 +14,7 @@ import Time
 type Msg
     = ClickedEvent Event.Id
     | UpdateEvent Event.Id Event.Status
+    | CurrentTime Time.Posix
 
 
 type alias Model =
@@ -45,6 +46,9 @@ update msg ({ ctx } as model) =
                     Context.setStatus ctx id status
             in
             ( { model | ctx = newCtx }, Ports.setStorage <| Context.encodeEvents newCtx )
+
+        CurrentTime currentTime ->
+            ( { model | ctx = Context.setTime ctx currentTime }, Cmd.none )
 
 
 view : Model -> Html Msg
@@ -284,17 +288,23 @@ viewUpdater ev =
             ]
     in
     Html.div
-        [ class "status-updater" ]
-    <|
-        List.map
-            (\s ->
-                Html.button
-                    [ classList [ ( "current-status", s == ev.status ) ]
-                    , onClick <| UpdateEvent ev.id s
-                    ]
-                    [ Html.text <| Event.statusToEmoji s ]
-            )
-            data
+        [ class "event-info" ]
+        [ Html.div
+            [ class "event-name" ]
+            [ Html.text ev.name ]
+        , Html.div
+            [ class "status-updater" ]
+          <|
+            List.map
+                (\s ->
+                    Html.button
+                        [ classList [ ( "current-status", s == ev.status ) ]
+                        , onClick <| UpdateEvent ev.id s
+                        ]
+                        [ Html.text <| Event.statusToEmoji s ]
+                )
+                data
+        ]
 
 
 totalQuarterHours : Clock -> Clock -> Int

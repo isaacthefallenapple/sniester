@@ -185,7 +185,7 @@ update msg model =
             in
             ( Lineup newModel, Cmd.map LineupMsg cmds )
 
-        ( CurrentTime currentTime, Lineup { ctx } ) ->
+        ( CurrentTime currentTime, Lineup mdl ) ->
             let
                 clock =
                     Clock.inNL currentTime
@@ -199,8 +199,11 @@ update msg model =
 
                 _ =
                     Debug.log "fakeTime" (Clock.toString clock)
+
+                ( newModel, cmds ) =
+                    Lineup.update (Lineup.CurrentTime fakeTime) mdl
             in
-            ( Lineup <| Lineup.new (Context.setTime ctx fakeTime), Cmd.none )
+            ( Lineup <| newModel, Cmd.map LineupMsg cmds )
 
         _ ->
             ( model, Cmd.none )
