@@ -261,7 +261,7 @@ main {
   border-left: var(--stroke-width) dashed var(--clr-white);
   opacity: 90%;
   left: calc(var(--time-indicator-position) - var(--stroke-width) / 2);
-  z-index: 999;
+  z-index: 499;
   pointer-events: none;
 }
 
