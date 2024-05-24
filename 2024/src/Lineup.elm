@@ -306,7 +306,7 @@ findStartAndEnd events =
                     f ()
 
         panic =
-            unwrap <| \_ -> Debug.todo "Maybe was Nothing"
+            unwrap <| \_ -> 0
     in
     ( Time.millisToPosix << panic <| List.minimum (List.map (.starttime >> Time.posixToMillis) events)
     , Time.millisToPosix << panic <| List.maximum (List.map (.endtime >> Time.posixToMillis) events)

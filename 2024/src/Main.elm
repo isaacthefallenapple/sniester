@@ -4,7 +4,6 @@ import Browser exposing (Document)
 import Browser.Navigation as Nav
 import Clock
 import Context exposing (Context, Events, Schedule(..))
-import Debug
 import Event exposing (Event)
 import Html exposing (Html)
 import Html.Attributes exposing (checked, class, classList, for, href, id, type_)
@@ -278,8 +277,8 @@ init flagsJson url key =
             Dec.decodeValue flagsDecoder flagsJson
     in
     case flags of
-        Err err ->
-            ( Error key url <| Debug.toString err, Cmd.none )
+        Err _ ->
+            ( Error key url <| "err", Cmd.none )
 
         Ok { time, friday, saturday, popup } ->
             let

@@ -2,7 +2,6 @@ module Context exposing (..)
 
 import Browser.Navigation as Nav
 import Clock exposing (Clock)
-import Debug exposing (todo)
 import Event exposing (Event)
 import Json.Encode as Enc
 import Time
@@ -164,12 +163,6 @@ todaysSchedule clock =
 
         millisSaturday =
             Time.posixToMillis startSaturday
-
-        _ =
-            startSaturday
-                |> Clock.inNL
-                |> Clock.toString
-                |> Debug.log "saturday"
     in
     if millisNow < millisSaturday then
         Friday
