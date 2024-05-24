@@ -9,7 +9,6 @@ import Event exposing (Event)
 import Html exposing (Html)
 import Html.Attributes exposing (checked, class, classList, for, href, id, type_)
 import Html.Events exposing (onClick)
-import Iso8601
 import Json.Decode as Dec
 import Json.Decode.Pipeline as Pipeline
 import Lineup
@@ -250,21 +249,8 @@ update msg model =
 
         ( CurrentTime currentTime, Lineup mdl ) ->
             let
-                clock =
-                    Clock.inNL currentTime
-
-                minute =
-                    Clock.toMinute clock
-
-                fakeTime =
-                    Iso8601.toTime ("2024-05-24T20:" ++ String.padLeft 2 '0' (String.fromInt minute) ++ ":00+02:00")
-                        |> Result.withDefault currentTime
-
-                _ =
-                    Debug.log "fakeTime" (Clock.toString clock)
-
                 ( newModel, cmds ) =
-                    Lineup.update (Lineup.CurrentTime fakeTime) mdl
+                    Lineup.update (Lineup.CurrentTime currentTime) mdl
             in
             ( Lineup <| newModel, Cmd.map LineupMsg cmds )
 
