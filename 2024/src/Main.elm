@@ -1,23 +1,18 @@
 module Main exposing (..)
 
-import Browser exposing (Document, UrlRequest)
+import Browser exposing (Document)
 import Browser.Navigation as Nav
-import Clock exposing (Clock)
+import Clock
 import Context exposing (Context, Events, Schedule(..))
-import Debug exposing (todo)
+import Debug
 import Event exposing (Event)
 import Html exposing (Html)
 import Html.Attributes exposing (checked, class, classList, for, href, id, type_)
 import Html.Events exposing (onClick)
-import Http
 import Iso8601
 import Json.Decode as Dec
 import Json.Decode.Pipeline as Pipeline
-import Json.Encode as Enc
 import Lineup
-import Platform exposing (Task)
-import Ports
-import Task
 import Time
 import Url exposing (Url)
 
@@ -216,9 +211,13 @@ update msg model =
                     ( model, Nav.load href )
 
         ( DayToggled schedule, Lineup { ctx } ) ->
-            ( Lineup <| Lineup.new <| Context.setSchedule ctx schedule, Nav.pushUrl ctx.key <| Context.scheduleToPath schedule )
+            let
+                ( newModel, cmds ) =
+                    Lineup.new <| Context.setSchedule ctx schedule
+            in
+            ( Lineup newModel, Cmd.batch [ cmds, Nav.pushUrl ctx.key <| Context.scheduleToPath schedule ] )
 
-        ( ChangedUrl ({ path, fragment } as url), Lineup { ctx } ) ->
+        ( ChangedUrl ({ fragment } as url), Lineup { ctx } ) ->
             let
                 schedule =
                     case fragment of
@@ -236,8 +235,11 @@ update msg model =
 
                 newCtx =
                     Context.setSchedule { ctx | url = url } schedule
+
+                ( newModel, cmds ) =
+                    Lineup.new newCtx
             in
-            ( Lineup <| Lineup.new newCtx, Cmd.none )
+            ( Lineup newModel, cmds )
 
         ( LineupMsg m, Lineup mdl ) ->
             let
@@ -255,7 +257,7 @@ update msg model =
                     Clock.toMinute clock
 
                 fakeTime =
-                    Iso8601.toTime ("2024-05-24T18:" ++ String.padLeft 2 '0' (String.fromInt minute) ++ ":00+02:00")
+                    Iso8601.toTime ("2024-05-24T20:" ++ String.padLeft 2 '0' (String.fromInt minute) ++ ":00+02:00")
                         |> Result.withDefault currentTime
 
                 _ =
@@ -303,8 +305,11 @@ init flagsJson url key =
 
                 ctx =
                     Context key url clock (Events friday saturday popup) schedule
+
+                ( newModel, cmds ) =
+                    Lineup.new ctx
             in
-            ( Lineup <| Lineup.new ctx, Nav.replaceUrl key (Context.scheduleToPath schedule) )
+            ( Lineup newModel, Cmd.batch [ cmds, Nav.replaceUrl key (Context.scheduleToPath schedule) ] )
 
 
 main : Program Dec.Value Model Msg

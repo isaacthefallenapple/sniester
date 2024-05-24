@@ -4503,6 +4503,43 @@ var _Parser_findSubString = F5(function(smallString, offset, row, col, bigString
 
 
 
+var _Bitwise_and = F2(function(a, b)
+{
+	return a & b;
+});
+
+var _Bitwise_or = F2(function(a, b)
+{
+	return a | b;
+});
+
+var _Bitwise_xor = F2(function(a, b)
+{
+	return a ^ b;
+});
+
+function _Bitwise_complement(a)
+{
+	return ~a;
+};
+
+var _Bitwise_shiftLeftBy = F2(function(offset, a)
+{
+	return a << offset;
+});
+
+var _Bitwise_shiftRightBy = F2(function(offset, a)
+{
+	return a >> offset;
+});
+
+var _Bitwise_shiftRightZfBy = F2(function(offset, a)
+{
+	return a >>> offset;
+});
+
+
+
 function _Time_now(millisToPosix)
 {
 	return _Scheduler_binding(function(callback)
@@ -4546,43 +4583,6 @@ function _Time_getZoneName()
 		callback(_Scheduler_succeed(name));
 	});
 }
-
-
-
-var _Bitwise_and = F2(function(a, b)
-{
-	return a & b;
-});
-
-var _Bitwise_or = F2(function(a, b)
-{
-	return a | b;
-});
-
-var _Bitwise_xor = F2(function(a, b)
-{
-	return a ^ b;
-});
-
-function _Bitwise_complement(a)
-{
-	return ~a;
-};
-
-var _Bitwise_shiftLeftBy = F2(function(offset, a)
-{
-	return a << offset;
-});
-
-var _Bitwise_shiftRightBy = F2(function(offset, a)
-{
-	return a >> offset;
-});
-
-var _Bitwise_shiftRightZfBy = F2(function(offset, a)
-{
-	return a >>> offset;
-});
 var $author$project$Main$ChangedUrl = function (a) {
 	return {$: 'ChangedUrl', a: a};
 };
@@ -5393,6 +5393,7 @@ var $author$project$Context$Events = F3(
 var $author$project$Main$Lineup = function (a) {
 	return {$: 'Lineup', a: a};
 };
+var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$json$Json$Decode$decodeValue = _Json_run;
 var $author$project$Main$Flags = F4(
 	function (time, friday, saturday, popup) {
@@ -6416,11 +6417,122 @@ var $elm$time$Time$Zone = F2(
 var $elm$time$Time$customZone = $elm$time$Time$Zone;
 var $author$project$Clock$inNL = $author$project$Clock$Clock(
 	A2($elm$time$Time$customZone, 2 * 60, _List_Nil));
-var $author$project$Lineup$new = function (ctx) {
-	return {ctx: ctx, selected: $elm$core$Maybe$Nothing};
+var $elm$core$Basics$composeR = F3(
+	function (f, g, x) {
+		return g(
+			f(x));
+	});
+var $author$project$Context$find = F2(
+	function (f, list) {
+		find:
+		while (true) {
+			if (!list.b) {
+				return $elm$core$Maybe$Nothing;
+			} else {
+				var x = list.a;
+				var rest = list.b;
+				if (f(x)) {
+					return $elm$core$Maybe$Just(x);
+				} else {
+					var $temp$f = f,
+						$temp$list = rest;
+					f = $temp$f;
+					list = $temp$list;
+					continue find;
+				}
+			}
+		}
+	});
+var $author$project$Context$getScheduled = function (_v0) {
+	var events = _v0.events;
+	var schedule = _v0.schedule;
+	return function () {
+		switch (schedule.$) {
+			case 'Friday':
+				return function ($) {
+					return $.friday;
+				};
+			case 'Saturday':
+				return function ($) {
+					return $.saturday;
+				};
+			default:
+				return function ($) {
+					return $.popup;
+				};
+		}
+	}()(events);
 };
-var $elm$core$Platform$Cmd$batch = _Platform_batch;
+var $elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return $elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $elm$core$List$sortBy = _List_sortBy;
+var $author$project$Clock$toPosixMillis = function (_v0) {
+	var time = _v0.time;
+	return $elm$time$Time$posixToMillis(time);
+};
+var $author$project$Context$closestEvent = function (ctx) {
+	var clock = ctx.clock;
+	var todaysEvents = $author$project$Context$getScheduled(ctx);
+	var timeInMillis = A2(
+		$elm$core$Basics$composeR,
+		function ($) {
+			return $.starttime;
+		},
+		$elm$time$Time$posixToMillis);
+	var currentTimeInMillis = $author$project$Clock$toPosixMillis(clock);
+	return A2(
+		$elm$core$Maybe$map,
+		function ($) {
+			return $.id;
+		},
+		A2(
+			$author$project$Context$find,
+			A2(
+				$elm$core$Basics$composeR,
+				timeInMillis,
+				$elm$core$Basics$gt(currentTimeInMillis)),
+			$elm$core$List$reverse(
+				A2($elm$core$List$sortBy, timeInMillis, todaysEvents))));
+};
+var $author$project$Event$idToString = function (_v0) {
+	var s = _v0.a;
+	return s;
+};
+var $author$project$Event$idToSelector = A2(
+	$elm$core$Basics$composeR,
+	$author$project$Event$idToString,
+	$elm$core$Basics$append('#'));
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $author$project$Ports$scrollIntoView = _Platform_outgoingPort('scrollIntoView', $elm$json$Json$Encode$string);
+var $elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
+var $author$project$Lineup$new = function (ctx) {
+	var closestEvent = $author$project$Context$closestEvent(ctx);
+	var scrollMe = A2($elm$core$Maybe$map, $author$project$Event$idToSelector, closestEvent);
+	var cmd = A2(
+		$elm$core$Maybe$withDefault,
+		$elm$core$Platform$Cmd$none,
+		A2($elm$core$Maybe$map, $author$project$Ports$scrollIntoView, scrollMe));
+	return _Utils_Tuple2(
+		{ctx: ctx, selected: $elm$core$Maybe$Nothing},
+		cmd);
+};
 var $elm$browser$Browser$Navigation$replaceUrl = _Browser_replaceUrl;
 var $author$project$Context$scheduleToString = function (schedule) {
 	switch (schedule.$) {
@@ -6440,14 +6552,121 @@ var $author$project$Context$scheduleToPath = function (schedule) {
 var $elm$core$Debug$toString = _Debug_toString;
 var $author$project$Context$Friday = {$: 'Friday'};
 var $author$project$Context$Saturday = {$: 'Saturday'};
+var $elm$core$Debug$log = _Debug_log;
 var $author$project$Context$startSaturday = $elm$time$Time$millisToPosix(1716593400000);
-var $author$project$Clock$toPosixMillis = function (_v0) {
+var $elm$core$String$cons = _String_cons;
+var $elm$core$String$fromChar = function (_char) {
+	return A2($elm$core$String$cons, _char, '');
+};
+var $elm$core$Bitwise$and = _Bitwise_and;
+var $elm$core$Bitwise$shiftRightBy = _Bitwise_shiftRightBy;
+var $elm$core$String$repeatHelp = F3(
+	function (n, chunk, result) {
+		return (n <= 0) ? result : A3(
+			$elm$core$String$repeatHelp,
+			n >> 1,
+			_Utils_ap(chunk, chunk),
+			(!(n & 1)) ? result : _Utils_ap(result, chunk));
+	});
+var $elm$core$String$repeat = F2(
+	function (n, chunk) {
+		return A3($elm$core$String$repeatHelp, n, chunk, '');
+	});
+var $elm$core$String$padLeft = F3(
+	function (n, _char, string) {
+		return _Utils_ap(
+			A2(
+				$elm$core$String$repeat,
+				n - $elm$core$String$length(string),
+				$elm$core$String$fromChar(_char)),
+			string);
+	});
+var $elm$time$Time$flooredDiv = F2(
+	function (numerator, denominator) {
+		return $elm$core$Basics$floor(numerator / denominator);
+	});
+var $elm$time$Time$toAdjustedMinutesHelp = F3(
+	function (defaultOffset, posixMinutes, eras) {
+		toAdjustedMinutesHelp:
+		while (true) {
+			if (!eras.b) {
+				return posixMinutes + defaultOffset;
+			} else {
+				var era = eras.a;
+				var olderEras = eras.b;
+				if (_Utils_cmp(era.start, posixMinutes) < 0) {
+					return posixMinutes + era.offset;
+				} else {
+					var $temp$defaultOffset = defaultOffset,
+						$temp$posixMinutes = posixMinutes,
+						$temp$eras = olderEras;
+					defaultOffset = $temp$defaultOffset;
+					posixMinutes = $temp$posixMinutes;
+					eras = $temp$eras;
+					continue toAdjustedMinutesHelp;
+				}
+			}
+		}
+	});
+var $elm$time$Time$toAdjustedMinutes = F2(
+	function (_v0, time) {
+		var defaultOffset = _v0.a;
+		var eras = _v0.b;
+		return A3(
+			$elm$time$Time$toAdjustedMinutesHelp,
+			defaultOffset,
+			A2(
+				$elm$time$Time$flooredDiv,
+				$elm$time$Time$posixToMillis(time),
+				60000),
+			eras);
+	});
+var $elm$time$Time$toHour = F2(
+	function (zone, time) {
+		return A2(
+			$elm$core$Basics$modBy,
+			24,
+			A2(
+				$elm$time$Time$flooredDiv,
+				A2($elm$time$Time$toAdjustedMinutes, zone, time),
+				60));
+	});
+var $author$project$Clock$toHour = function (_v0) {
+	var zone = _v0.zone;
 	var time = _v0.time;
-	return $elm$time$Time$posixToMillis(time);
+	return A2($elm$time$Time$toHour, zone, time);
+};
+var $elm$time$Time$toMinute = F2(
+	function (zone, time) {
+		return A2(
+			$elm$core$Basics$modBy,
+			60,
+			A2($elm$time$Time$toAdjustedMinutes, zone, time));
+	});
+var $author$project$Clock$toMinute = function (_v0) {
+	var zone = _v0.zone;
+	var time = _v0.time;
+	return A2($elm$time$Time$toMinute, zone, time);
+};
+var $author$project$Clock$toString = function (clock) {
+	var pad = A2(
+		$elm$core$String$padLeft,
+		2,
+		_Utils_chr('0'));
+	var minute = $elm$core$String$fromInt(
+		$author$project$Clock$toMinute(clock));
+	var hour = $elm$core$String$fromInt(
+		$author$project$Clock$toHour(clock));
+	return pad(hour) + (':' + pad(minute));
 };
 var $author$project$Context$todaysSchedule = function (clock) {
 	var millisSaturday = $elm$time$Time$posixToMillis($author$project$Context$startSaturday);
 	var millisNow = $author$project$Clock$toPosixMillis(clock);
+	var _v0 = A2(
+		$elm$core$Debug$log,
+		'saturday',
+		$author$project$Clock$toString(
+			$author$project$Clock$inNL($author$project$Context$startSaturday)));
 	return (_Utils_cmp(millisNow, millisSaturday) < 0) ? $author$project$Context$Friday : $author$project$Context$Saturday;
 };
 var $author$project$Main$init = F3(
@@ -6477,13 +6696,20 @@ var $author$project$Main$init = F3(
 				clock,
 				A3($author$project$Context$Events, friday, saturday, popup),
 				schedule);
+			var _v1 = $author$project$Lineup$new(ctx);
+			var newModel = _v1.a;
+			var cmds = _v1.b;
 			return _Utils_Tuple2(
-				$author$project$Main$Lineup(
-					$author$project$Lineup$new(ctx)),
-				A2(
-					$elm$browser$Browser$Navigation$replaceUrl,
-					key,
-					$author$project$Context$scheduleToPath(schedule)));
+				$author$project$Main$Lineup(newModel),
+				$elm$core$Platform$Cmd$batch(
+					_List_fromArray(
+						[
+							cmds,
+							A2(
+							$elm$browser$Browser$Navigation$replaceUrl,
+							key,
+							$author$project$Context$scheduleToPath(schedule))
+						])));
 		}
 	});
 var $author$project$Main$CurrentTime = function (a) {
@@ -6906,35 +7132,7 @@ var $author$project$Main$LineupMsg = function (a) {
 };
 var $author$project$Context$Popup = {$: 'Popup'};
 var $elm$browser$Browser$Navigation$load = _Browser_load;
-var $elm$core$Debug$log = _Debug_log;
 var $elm$core$Platform$Cmd$map = _Platform_map;
-var $elm$core$String$cons = _String_cons;
-var $elm$core$String$fromChar = function (_char) {
-	return A2($elm$core$String$cons, _char, '');
-};
-var $elm$core$Bitwise$and = _Bitwise_and;
-var $elm$core$Bitwise$shiftRightBy = _Bitwise_shiftRightBy;
-var $elm$core$String$repeatHelp = F3(
-	function (n, chunk, result) {
-		return (n <= 0) ? result : A3(
-			$elm$core$String$repeatHelp,
-			n >> 1,
-			_Utils_ap(chunk, chunk),
-			(!(n & 1)) ? result : _Utils_ap(result, chunk));
-	});
-var $elm$core$String$repeat = F2(
-	function (n, chunk) {
-		return A3($elm$core$String$repeatHelp, n, chunk, '');
-	});
-var $elm$core$String$padLeft = F3(
-	function (n, _char, string) {
-		return _Utils_ap(
-			A2(
-				$elm$core$String$repeat,
-				n - $elm$core$String$length(string),
-				$elm$core$String$fromChar(_char)),
-			string);
-	});
 var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
 var $author$project$Context$setSchedule = F2(
 	function (ctx, schedule) {
@@ -6942,84 +7140,6 @@ var $author$project$Context$setSchedule = F2(
 			ctx,
 			{schedule: schedule});
 	});
-var $elm$time$Time$flooredDiv = F2(
-	function (numerator, denominator) {
-		return $elm$core$Basics$floor(numerator / denominator);
-	});
-var $elm$time$Time$toAdjustedMinutesHelp = F3(
-	function (defaultOffset, posixMinutes, eras) {
-		toAdjustedMinutesHelp:
-		while (true) {
-			if (!eras.b) {
-				return posixMinutes + defaultOffset;
-			} else {
-				var era = eras.a;
-				var olderEras = eras.b;
-				if (_Utils_cmp(era.start, posixMinutes) < 0) {
-					return posixMinutes + era.offset;
-				} else {
-					var $temp$defaultOffset = defaultOffset,
-						$temp$posixMinutes = posixMinutes,
-						$temp$eras = olderEras;
-					defaultOffset = $temp$defaultOffset;
-					posixMinutes = $temp$posixMinutes;
-					eras = $temp$eras;
-					continue toAdjustedMinutesHelp;
-				}
-			}
-		}
-	});
-var $elm$time$Time$toAdjustedMinutes = F2(
-	function (_v0, time) {
-		var defaultOffset = _v0.a;
-		var eras = _v0.b;
-		return A3(
-			$elm$time$Time$toAdjustedMinutesHelp,
-			defaultOffset,
-			A2(
-				$elm$time$Time$flooredDiv,
-				$elm$time$Time$posixToMillis(time),
-				60000),
-			eras);
-	});
-var $elm$time$Time$toMinute = F2(
-	function (zone, time) {
-		return A2(
-			$elm$core$Basics$modBy,
-			60,
-			A2($elm$time$Time$toAdjustedMinutes, zone, time));
-	});
-var $author$project$Clock$toMinute = function (_v0) {
-	var zone = _v0.zone;
-	var time = _v0.time;
-	return A2($elm$time$Time$toMinute, zone, time);
-};
-var $elm$time$Time$toHour = F2(
-	function (zone, time) {
-		return A2(
-			$elm$core$Basics$modBy,
-			24,
-			A2(
-				$elm$time$Time$flooredDiv,
-				A2($elm$time$Time$toAdjustedMinutes, zone, time),
-				60));
-	});
-var $author$project$Clock$toHour = function (_v0) {
-	var zone = _v0.zone;
-	var time = _v0.time;
-	return A2($elm$time$Time$toHour, zone, time);
-};
-var $author$project$Clock$toString = function (clock) {
-	var pad = A2(
-		$elm$core$String$padLeft,
-		2,
-		_Utils_chr('0'));
-	var minute = $elm$core$String$fromInt(
-		$author$project$Clock$toMinute(clock));
-	var hour = $elm$core$String$fromInt(
-		$author$project$Clock$toHour(clock));
-	return pad(hour) + (':' + pad(minute));
-};
 var $elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
 		if (maybePort.$ === 'Nothing') {
@@ -7064,11 +7184,6 @@ var $elm$url$Url$toString = function (url) {
 					_Utils_ap(http, url.host)),
 				url.path)));
 };
-var $elm$core$Basics$composeR = F3(
-	function (f, g, x) {
-		return g(
-			f(x));
-	});
 var $author$project$Event$statusToString = function (status) {
 	switch (status.$) {
 		case 'Going':
@@ -7081,7 +7196,6 @@ var $author$project$Event$statusToString = function (status) {
 			return 'Undecided';
 	}
 };
-var $elm$json$Json$Encode$string = _Json_wrap;
 var $author$project$Event$encodeStatus = A2($elm$core$Basics$composeR, $author$project$Event$statusToString, $elm$json$Json$Encode$string);
 var $rtfeldman$elm_iso8601_date_strings$Iso8601$fromMonth = function (month) {
 	switch (month.$) {
@@ -7291,26 +7405,6 @@ var $author$project$Context$encodeEvents = function (ctx) {
 				A2($elm$json$Json$Encode$list, $author$project$Event$encode, ctx.events.popup))
 			]));
 };
-var $author$project$Context$getScheduled = function (_v0) {
-	var events = _v0.events;
-	var schedule = _v0.schedule;
-	return function () {
-		switch (schedule.$) {
-			case 'Friday':
-				return function ($) {
-					return $.friday;
-				};
-			case 'Saturday':
-				return function ($) {
-					return $.saturday;
-				};
-			default:
-				return function ($) {
-					return $.popup;
-				};
-		}
-	}()(events);
-};
 var $author$project$Context$setScheduled = F2(
 	function (ctx, newEvents) {
 		var schedule = ctx.schedule;
@@ -7461,25 +7555,31 @@ var $author$project$Main$update = F2(
 					if (_v0.b.$ === 'Lineup') {
 						var schedule = _v0.a.a;
 						var ctx = _v0.b.a.ctx;
+						var _v3 = $author$project$Lineup$new(
+							A2($author$project$Context$setSchedule, ctx, schedule));
+						var newModel = _v3.a;
+						var cmds = _v3.b;
 						return _Utils_Tuple2(
-							$author$project$Main$Lineup(
-								$author$project$Lineup$new(
-									A2($author$project$Context$setSchedule, ctx, schedule))),
-							A2(
-								$elm$browser$Browser$Navigation$pushUrl,
-								ctx.key,
-								$author$project$Context$scheduleToPath(schedule)));
+							$author$project$Main$Lineup(newModel),
+							$elm$core$Platform$Cmd$batch(
+								_List_fromArray(
+									[
+										cmds,
+										A2(
+										$elm$browser$Browser$Navigation$pushUrl,
+										ctx.key,
+										$author$project$Context$scheduleToPath(schedule))
+									])));
 					} else {
 						break _v0$5;
 					}
 				case 'ChangedUrl':
 					if (_v0.b.$ === 'Lineup') {
 						var url = _v0.a.a;
-						var path = url.path;
 						var fragment = url.fragment;
 						var ctx = _v0.b.a.ctx;
 						var schedule = function () {
-							_v3$3:
+							_v5$3:
 							while (true) {
 								if (fragment.$ === 'Just') {
 									switch (fragment.a) {
@@ -7490,10 +7590,10 @@ var $author$project$Main$update = F2(
 										case 'friday':
 											return $author$project$Context$Friday;
 										default:
-											break _v3$3;
+											break _v5$3;
 									}
 								} else {
-									break _v3$3;
+									break _v5$3;
 								}
 							}
 							return $author$project$Context$todaysSchedule(ctx.clock);
@@ -7504,10 +7604,12 @@ var $author$project$Main$update = F2(
 								ctx,
 								{url: url}),
 							schedule);
+						var _v4 = $author$project$Lineup$new(newCtx);
+						var newModel = _v4.a;
+						var cmds = _v4.b;
 						return _Utils_Tuple2(
-							$author$project$Main$Lineup(
-								$author$project$Lineup$new(newCtx)),
-							$elm$core$Platform$Cmd$none);
+							$author$project$Main$Lineup(newModel),
+							cmds);
 					} else {
 						break _v0$5;
 					}
@@ -7515,9 +7617,9 @@ var $author$project$Main$update = F2(
 					if (_v0.b.$ === 'Lineup') {
 						var m = _v0.a.a;
 						var mdl = _v0.b.a;
-						var _v4 = A2($author$project$Lineup$update, m, mdl);
-						var newModel = _v4.a;
-						var cmds = _v4.b;
+						var _v6 = A2($author$project$Lineup$update, m, mdl);
+						var newModel = _v6.a;
+						var cmds = _v6.b;
 						return _Utils_Tuple2(
 							$author$project$Main$Lineup(newModel),
 							A2($elm$core$Platform$Cmd$map, $author$project$Main$LineupMsg, cmds));
@@ -7534,18 +7636,18 @@ var $author$project$Main$update = F2(
 							$elm$core$Result$withDefault,
 							currentTime,
 							$rtfeldman$elm_iso8601_date_strings$Iso8601$toTime(
-								'2024-05-24T18:' + (A3(
+								'2024-05-24T20:' + (A3(
 									$elm$core$String$padLeft,
 									2,
 									_Utils_chr('0'),
 									$elm$core$String$fromInt(minute)) + ':00+02:00')));
-						var _v5 = A2(
+						var _v7 = A2(
 							$author$project$Lineup$update,
 							$author$project$Lineup$CurrentTime(fakeTime),
 							mdl);
-						var newModel = _v5.a;
-						var cmds = _v5.b;
-						var _v6 = A2(
+						var newModel = _v7.a;
+						var cmds = _v7.b;
+						var _v8 = A2(
 							$elm$core$Debug$log,
 							'fakeTime',
 							$author$project$Clock$toString(clock));
@@ -7720,8 +7822,8 @@ var $author$project$Lineup$findStartAndEnd = function (events) {
 			return _Debug_todo(
 				'Lineup',
 				{
-					start: {line: 295, column: 29},
-					end: {line: 295, column: 39}
+					start: {line: 309, column: 29},
+					end: {line: 309, column: 39}
 				})('Maybe was Nothing');
 		});
 	return _Utils_Tuple2(
@@ -7754,27 +7856,6 @@ var $author$project$Lineup$findStartAndEnd = function (events) {
 						$elm$time$Time$posixToMillis),
 					events))));
 };
-var $author$project$Context$find = F2(
-	function (f, list) {
-		find:
-		while (true) {
-			if (!list.b) {
-				return $elm$core$Maybe$Nothing;
-			} else {
-				var x = list.a;
-				var rest = list.b;
-				if (f(x)) {
-					return $elm$core$Maybe$Just(x);
-				} else {
-					var $temp$f = f,
-						$temp$list = rest;
-					f = $temp$f;
-					list = $temp$list;
-					continue find;
-				}
-			}
-		}
-	});
 var $author$project$Context$getEvent = F2(
 	function (ctx, id) {
 		return A2(
@@ -7793,16 +7874,6 @@ var $author$project$Clock$isBetween = F3(
 		var loM = $author$project$Clock$toPosixMillis(lo);
 		var hiM = $author$project$Clock$toPosixMillis(hi);
 		return (_Utils_cmp(loM, vM) < 1) && (_Utils_cmp(vM, hiM) < 1);
-	});
-var $elm$core$Maybe$map = F2(
-	function (f, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return $elm$core$Maybe$Just(
-				f(value));
-		} else {
-			return $elm$core$Maybe$Nothing;
-		}
 	});
 var $elm$core$Tuple$mapBoth = F3(
 	function (funcA, funcB, _v0) {
@@ -7848,15 +7919,6 @@ var $elm$core$List$concat = function (lists) {
 	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
 };
 var $elm$core$String$fromFloat = _String_fromNumber;
-var $elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
 var $author$project$Lineup$isSelected = F2(
 	function (id, e) {
 		return A2(
@@ -7976,7 +8038,8 @@ var $author$project$Lineup$viewEvent = F5(
 							_Utils_Tuple2('selected', selected),
 							_Utils_Tuple2('past', isPast)
 						])),
-					$elm$html$Html$Attributes$id('currently-selected-event'),
+					$elm$html$Html$Attributes$id(
+					$author$project$Event$idToString(id)),
 					$elm$html$Html$Attributes$class(
 					$elm$core$String$toLower(
 						$author$project$Event$statusToString(status))),
@@ -8347,7 +8410,6 @@ var $elm$core$List$partition = F2(
 			_Utils_Tuple2(_List_Nil, _List_Nil),
 			list);
 	});
-var $elm$core$List$sortBy = _List_sortBy;
 var $author$project$Context$upNextIn = F2(
 	function (events, clock) {
 		var getTime = A2(

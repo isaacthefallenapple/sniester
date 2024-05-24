@@ -23,11 +23,25 @@ type alias Model =
     }
 
 
-new : Context -> Model
+new : Context -> ( Model, Cmd msg )
 new ctx =
-    { ctx = ctx
-    , selected = Nothing
-    }
+    let
+        closestEvent =
+            Context.closestEvent ctx
+
+        scrollMe =
+            closestEvent |> Maybe.map Event.idToSelector
+
+        cmd =
+            scrollMe
+                |> Maybe.map Ports.scrollIntoView
+                |> Maybe.withDefault Cmd.none
+    in
+    ( { ctx = ctx
+      , selected = Nothing
+      }
+    , cmd
+    )
 
 
 type alias ToMsg msg =
@@ -116,7 +130,7 @@ viewEvent selected startTime currentTime row { name, id, status, starttime, endt
     Html.article
         [ class "event"
         , classList [ ( "selected", selected ), ( "past", isPast ) ]
-        , Html.Attributes.id "currently-selected-event"
+        , Html.Attributes.id <| Event.idToString id
         , class <| String.toLower <| Event.statusToString <| status
         , style
             [ ( "grid-row", String.fromInt (row + 1) )

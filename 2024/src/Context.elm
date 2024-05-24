@@ -86,6 +86,25 @@ getEvent ctx id =
     find (.id >> (==) id) (getScheduled ctx)
 
 
+closestEvent : Context -> Maybe Event.Id
+closestEvent ({ clock } as ctx) =
+    let
+        todaysEvents =
+            getScheduled ctx
+
+        timeInMillis =
+            .starttime >> Time.posixToMillis
+
+        currentTimeInMillis =
+            Clock.toPosixMillis clock
+    in
+    todaysEvents
+        |> List.sortBy timeInMillis
+        |> List.reverse
+        |> find (timeInMillis >> (>) currentTimeInMillis)
+        |> Maybe.map .id
+
+
 find : (a -> Bool) -> List a -> Maybe a
 find f list =
     case list of
@@ -145,6 +164,12 @@ todaysSchedule clock =
 
         millisSaturday =
             Time.posixToMillis startSaturday
+
+        _ =
+            startSaturday
+                |> Clock.inNL
+                |> Clock.toString
+                |> Debug.log "saturday"
     in
     if millisNow < millisSaturday then
         Friday

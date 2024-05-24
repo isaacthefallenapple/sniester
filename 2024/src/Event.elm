@@ -1,4 +1,4 @@
-module Event exposing (Event, Id, Status(..), decoder, encode, statusToEmoji, statusToString)
+module Event exposing (Event, Id, Status(..), decoder, encode, idToSelector, idToString, statusToEmoji, statusToString)
 
 import Iso8601
 import Json.Decode as Dec exposing (Decoder)
@@ -116,6 +116,16 @@ decoder =
 
 type Id
     = Id String
+
+
+idToString : Id -> String
+idToString (Id s) =
+    s
+
+
+idToSelector : Id -> String
+idToSelector =
+    idToString >> (++) "#"
 
 
 mkId : String -> Time.Posix -> Id

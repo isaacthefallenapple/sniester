@@ -671,6 +671,16 @@
             const store = tx.objectStore(STORE_NAME);
             store.put(data, EVENTS_KEY);
           });
+
+          app.ports.scrollIntoView.subscribe((selector) => {
+            const el = document.querySelector(selector);
+            console.info(`scrolling into view: "${selector}"`);
+            if (!el) {
+              console.info("not found");
+              return;
+            }
+            el.scrollIntoView({ behavior: "smooth", inline: "center" });
+          });
         };
       };
       request.onupgradeneeded = (e) => {
