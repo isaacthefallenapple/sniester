@@ -6551,13 +6551,9 @@ var $author$project$Context$scheduleToPath = function (schedule) {
 };
 var $author$project$Context$Friday = {$: 'Friday'};
 var $author$project$Context$Saturday = {$: 'Saturday'};
-var $elm$core$Debug$log = _Debug_log;
 var $author$project$Context$startSaturday = $elm$time$Time$millisToPosix(1748037600000);
 var $author$project$Context$todaysSchedule = function (clock) {
-	var millisSaturday = A2(
-		$elm$core$Debug$log,
-		'millisSaturday',
-		$elm$time$Time$posixToMillis($author$project$Context$startSaturday));
+	var millisSaturday = $elm$time$Time$posixToMillis($author$project$Context$startSaturday);
 	var millisNow = $author$project$Clock$toPosixMillis(clock);
 	return (_Utils_cmp(millisNow, millisSaturday) < 0) ? $author$project$Context$Friday : $author$project$Context$Saturday;
 };
