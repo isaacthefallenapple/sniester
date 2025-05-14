@@ -152,7 +152,7 @@ scheduleToPath schedule =
 
 startSaturday : Time.Posix
 startSaturday =
-    Time.millisToPosix 1716593400000
+    Time.millisToPosix 1748037600000
 
 
 todaysSchedule : Clock -> Schedule
