@@ -11,7 +11,7 @@ type alias Clock =
 
 inNL : Time.Posix -> Clock
 inNL =
-    Clock <| Time.customZone (2 * 60) []
+    Clock <| Time.customZone (0 * 60) []
 
 
 toString : Clock -> String
