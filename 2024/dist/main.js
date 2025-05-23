@@ -6391,7 +6391,7 @@ var $elm$time$Time$Zone = F2(
 	});
 var $elm$time$Time$customZone = $elm$time$Time$Zone;
 var $author$project$Clock$inNL = $author$project$Clock$Clock(
-	A2($elm$time$Time$customZone, 2 * 60, _List_Nil));
+	A2($elm$time$Time$customZone, 0 * 60, _List_Nil));
 var $elm$core$Basics$composeR = F3(
 	function (f, g, x) {
 		return g(
